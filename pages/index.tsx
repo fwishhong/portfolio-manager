@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent, KeyboardEvent } from 'react';
 import { Card } from '@/components/ui/card';
 import { AlertCircle, Download } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
