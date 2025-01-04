@@ -206,7 +206,17 @@ export default function PortfolioDashboard() {
                     onBlur={(e) => handlePriceUpdate(market, index, (e.target as HTMLInputElement).value)}
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
-                        handlePriceUpdate(market, index, e.target.value);
+                        <input 
+    type="text"
+    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>)=> {
+      if(e.key ==="Enter"){
+        handlePriceUpdate(market, index, e.currentTarget.value);
+      }
+    }}
+    onChange = {(e: ChangeEvent<HTMLInputElement>) => {
+      console.log(e.currentTarget.value);
+    }}
+  />
                       }
                     }}
                     autoFocus
