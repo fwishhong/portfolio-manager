@@ -203,7 +203,7 @@ export default function PortfolioDashboard() {
                     step={market === 'hk' ? "0.001" : "0.01"}
                     defaultValue={stock.price}
                     className="w-20 text-right border rounded p-1"
-                    onBlur={(e) => handlePriceUpdate(market, index, e.target.value)}
+                    onBlur={(e) => handlePriceUpdate(market, index, (e.target as HTMLInputElement).value)}
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
                         handlePriceUpdate(market, index, e.target.value);
