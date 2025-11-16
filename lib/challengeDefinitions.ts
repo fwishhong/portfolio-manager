@@ -272,7 +272,7 @@ export const CH16_ShadowMatch: Challenge = {
   config: {
     targets: 1,
     distractors: 3,
-    shapes: ['cube', 'sphere', 'pyramid', 'cylinder'],
+    shapes: ['cube', 'sphere', 'pyramid', 'cylinder'] as any,
   },
   tags: ['3D', '影子', '空间'],
 };
