@@ -30,7 +30,7 @@ export function ColorHunter({ challenge, onComplete, onMistake }: ColorHunterPro
 
   // 生成形状
   useEffect(() => {
-    const { targets, distractors, colors, shapes: shapeTypes } = challenge.config;
+    const { targets = 1, distractors = 7, colors, shapes: shapeTypes } = challenge.config;
     const allColors = colors || ['#FF6B6B', '#4ECDC4', '#FFE66D', '#95E1D3', '#A8E6CF'];
     const allShapes = (shapeTypes || ['circle', 'square', 'triangle']) as ('circle' | 'square' | 'triangle')[];
 

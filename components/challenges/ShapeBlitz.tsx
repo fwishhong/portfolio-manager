@@ -32,7 +32,7 @@ export function ShapeBlitz({ challenge, onComplete, onMistake }: ShapeBlitzProps
   const [totalTargets, setTotalTargets] = useState(0);
 
   useEffect(() => {
-    const { targets, distractors, colors, shapes: shapeTypes } = challenge.config;
+    const { targets = 3, distractors = 5, colors, shapes: shapeTypes } = challenge.config;
     const allColors = colors || ['#FF6B6B', '#4ECDC4', '#FFE66D', '#95E1D3'];
     const allShapes = (shapeTypes || ['circle', 'square', 'triangle', 'star']) as ShapeType[];
 

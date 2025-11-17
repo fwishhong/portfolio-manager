@@ -90,13 +90,13 @@ export class DifficultyManager {
 
     // 调整目标数量（难度越高，目标越多）
     const adjustedTargets = this.adjustTargets(
-      challenge.config.targets,
+      challenge.config.targets || 1,
       difficultyMultiplier
     );
 
     // 调整干扰项数量（难度越高，干扰越多）
     const adjustedDistractors = this.adjustDistractors(
-      challenge.config.distractors,
+      challenge.config.distractors || 7,
       difficultyMultiplier
     );
 

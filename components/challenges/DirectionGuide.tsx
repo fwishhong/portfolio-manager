@@ -39,7 +39,8 @@ export function DirectionGuide({ challenge, onComplete, onMistake }: DirectionGu
   }, [challenge]);
 
   const generateSequence = () => {
-    const length = Math.min(Math.max(challenge.config.targets, 3), 6);
+    const { targets = 4 } = challenge.config;
+    const length = Math.min(Math.max(targets, 3), 6);
     const seq: Direction[] = [];
 
     let currentDir = 0; // 从上开始

@@ -10,7 +10,7 @@ import { createChallengeResult } from '@/lib/scoreCalculator';
 import { audioManager } from '@/lib/audioManager';
 import { Challenge } from '@/types/game';
 
-// 导入2D关卡组件
+// 导入2D关卡组件 (CH01-CH25)
 import { ColorHunter } from '@/components/challenges/ColorHunter';
 import { ShapeBlitz } from '@/components/challenges/ShapeBlitz';
 import { QuickMath } from '@/components/challenges/QuickMath';
@@ -24,9 +24,20 @@ import { OddEvenSort } from '@/components/challenges/OddEvenSort';
 import { DirectionGuide } from '@/components/challenges/DirectionGuide';
 import { ReverseThinking } from '@/components/challenges/ReverseThinking';
 import { StroopEffect } from '@/components/challenges/StroopEffect';
+import { ChainReaction } from '@/components/challenges/ChainReaction';
+import { MissingItem } from '@/components/challenges/MissingItem';
+import { MultipleHunter } from '@/components/challenges/MultipleHunter';
+import { EquationBalance } from '@/components/challenges/EquationBalance';
+import { PatternRule } from '@/components/challenges/PatternRule';
+import { ShadowMatch } from '@/components/challenges/ShadowMatch';
+import { Multitask } from '@/components/challenges/Multitask';
+import { RhythmClick } from '@/components/challenges/RhythmClick';
 
 // 3D关卡
 import { CubeMemory } from '@/components/challenges/CubeMemory';
+
+// 变体关卡组件 (CH26-CH100)
+import { VariantChallenge } from '@/components/challenges/VariantChallenge';
 
 interface GameEngineProps {
   onGameOver?: () => void;
@@ -43,12 +54,11 @@ export function GameEngine({ onGameOver }: GameEngineProps) {
     setMistakes(0);
     setStartTime(Date.now());
 
-    // 随机选择一个关卡（已实现的14个关卡，包含1个3D关卡）
-    const availableChallenges = [
-      'CH01', 'CH02', 'CH03', 'CH04', 'CH06', 'CH07', 'CH08',
-      'CH10', 'CH11', 'CH14', 'CH15', 'CH17', 'CH23', 'CH24'
-    ];
-    const randomId = availableChallenges[Math.floor(Math.random() * availableChallenges.length)];
+    // 随机选择一个关卡（所有100个关卡）
+    // 可以通过配置控制开放的关卡范围
+    const totalChallenges = 100;
+    const challengeNumber = Math.floor(Math.random() * totalChallenges) + 1;
+    const randomId = `CH${challengeNumber.toString().padStart(2, '0')}`;
     const nextChallenge = getChallengeById(randomId);
 
     if (!nextChallenge) return;
@@ -147,6 +157,15 @@ function renderChallenge(
     onMistake,
   };
 
+  // 获取关卡编号
+  const challengeNum = parseInt(challenge.id.replace('CH', ''));
+
+  // CH26-CH100使用通用变体组件
+  if (challengeNum >= 26) {
+    return <VariantChallenge {...commonProps} />;
+  }
+
+  // CH01-CH25使用专用组件
   switch (challenge.id) {
     // 反应速度型
     case 'CH01':
@@ -157,6 +176,8 @@ function renderChallenge(
       return <NumberSniper {...commonProps} />;
     case 'CH04':
       return <FlashDodge {...commonProps} />;
+    case 'CH05':
+      return <ChainReaction {...commonProps} />;
 
     // 记忆力型
     case 'CH06':
@@ -165,26 +186,46 @@ function renderChallenge(
       return <ColorSequence {...commonProps} />;
     case 'CH08':
       return <CubeMemory {...commonProps} />;
+    case 'CH09':
+      return <MissingItem {...commonProps} />;
 
     // 数学计算型
     case 'CH10':
       return <QuickMath {...commonProps} />;
     case 'CH11':
       return <NumberCompare {...commonProps} />;
+    case 'CH12':
+      return <MultipleHunter {...commonProps} />;
+    case 'CH13':
+      return <EquationBalance {...commonProps} />;
 
     // 判断力型
     case 'CH14':
       return <TrueFalse {...commonProps} />;
     case 'CH15':
       return <OddEvenSort {...commonProps} />;
+    case 'CH16':
+      return <ShadowMatch {...commonProps} />;
     case 'CH17':
       return <DirectionGuide {...commonProps} />;
+    case 'CH18':
+      return <PatternRule {...commonProps} />;
+
+    // 空间感知型 (暂时使用占位符)
+    case 'CH19':
+    case 'CH20':
+    case 'CH21':
+      return <VariantChallenge {...commonProps} />;
 
     // 综合挑战型
+    case 'CH22':
+      return <Multitask {...commonProps} />;
     case 'CH23':
       return <ReverseThinking {...commonProps} />;
     case 'CH24':
       return <StroopEffect {...commonProps} />;
+    case 'CH25':
+      return <RhythmClick {...commonProps} />;
 
     default:
       return (

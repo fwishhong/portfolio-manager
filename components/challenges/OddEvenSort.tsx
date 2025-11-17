@@ -24,7 +24,8 @@ export function OddEvenSort({ challenge, onComplete, onMistake }: OddEvenSortPro
   const [draggedNumber, setDraggedNumber] = useState<number | null>(null);
 
   useEffect(() => {
-    const count = Math.min(challenge.config.targets, 9);
+    const { targets = 6 } = challenge.config;
+    const count = Math.min(targets, 9);
     const items: NumberItem[] = [];
 
     for (let i = 0; i < count; i++) {

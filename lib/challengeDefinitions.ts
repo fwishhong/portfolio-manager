@@ -3,7 +3,7 @@
  * 包含所有25种关卡类型的配置
  */
 
-import { Challenge } from '@/types/game';
+import { Challenge, DifficultyLevel } from '@/types/game';
 
 // ============ 颜色配置 ============
 const COLORS = {
@@ -426,7 +426,7 @@ export const CH25_RhythmClick: Challenge = {
 
 // ============ 导出所有关卡 ============
 
-export const ALL_CHALLENGES: Challenge[] = [
+const BASE_CHALLENGES: Challenge[] = [
   // 反应速度型
   CH01_ColorHunter,
   CH02_ShapeBlitz,
@@ -464,6 +464,164 @@ export const ALL_CHALLENGES: Challenge[] = [
   CH24_StroopEffect,
   CH25_RhythmClick,
 ];
+
+// ============ 扩展关卡生成器 (26-100) ============
+
+/**
+ * 生成变体关卡
+ * 基于核心关卡创建难度和配置的变体
+ */
+function generateVariantChallenges(): Challenge[] {
+  const variants: Challenge[] = [];
+
+  // 辅助函数：确保难度在有效范围内
+  const clampDifficulty = (value: number): DifficultyLevel => {
+    return Math.min(5, Math.max(1, Math.round(value))) as DifficultyLevel;
+  };
+
+  // 26-30: 颜色系列变体
+  for (let i = 26; i <= 30; i++) {
+    variants.push({
+      id: `CH${i.toString().padStart(2, '0')}`,
+      name: `颜色挑战${i - 25}`,
+      description: '颜色识别变体关卡',
+      type: 'reaction',
+      dimension: '2D',
+      difficulty: clampDifficulty((i - 25) / 2),
+      baseTimeLimit: 6 - Math.floor((i - 26) / 2),
+      config: {
+        targets: 1 + Math.floor((i - 26) / 2),
+        distractors: 6 + (i - 26),
+        colors: COLORS.primary,
+        variant: `color_v${i - 25}`
+      },
+      tags: ['颜色', '变体'],
+    });
+  }
+
+  // 31-35: 形状系列变体
+  for (let i = 31; i <= 35; i++) {
+    variants.push({
+      id: `CH${i.toString().padStart(2, '0')}`,
+      name: `形状挑战${i - 30}`,
+      description: '形状识别变体关卡',
+      type: 'reaction',
+      dimension: '2D',
+      difficulty: clampDifficulty((i - 30) / 2),
+      baseTimeLimit: 6 - Math.floor((i - 31) / 2),
+      config: {
+        targets: 2 + Math.floor((i - 31) / 2),
+        distractors: 5 + (i - 31),
+        shapes: ['circle', 'square', 'triangle', 'star', 'hexagon'],
+        variant: `shape_v${i - 30}`
+      },
+      tags: ['形状', '变体'],
+    });
+  }
+
+  // 36-42: 数字系列变体
+  for (let i = 36; i <= 42; i++) {
+    variants.push({
+      id: `CH${i.toString().padStart(2, '0')}`,
+      name: `数字挑战${i - 35}`,
+      description: '数字计算变体关卡',
+      type: 'math',
+      dimension: '2D',
+      difficulty: clampDifficulty((i - 35) / 2),
+      baseTimeLimit: 8 - Math.floor((i - 36) / 3),
+      config: {
+        complexity: i - 35,
+        variant: `number_v${i - 35}`
+      },
+      tags: ['数字', '变体'],
+    });
+  }
+
+  // 43-48: 记忆系列变体
+  for (let i = 43; i <= 48; i++) {
+    variants.push({
+      id: `CH${i.toString().padStart(2, '0')}`,
+      name: `记忆挑战${i - 42}`,
+      description: '记忆力变体关卡',
+      type: 'memory',
+      dimension: '2D',
+      difficulty: clampDifficulty((i - 42) / 2),
+      baseTimeLimit: 10 - Math.floor((i - 43) / 2),
+      config: {
+        items: 3 + (i - 43),
+        variant: `memory_v${i - 42}`
+      },
+      tags: ['记忆', '变体'],
+    });
+  }
+
+  // 49-50: 极限反应
+  for (let i = 49; i <= 50; i++) {
+    variants.push({
+      id: `CH${i.toString().padStart(2, '0')}`,
+      name: `极速反应${i - 48}`,
+      description: '极限反应挑战',
+      type: 'reaction',
+      dimension: '2D',
+      difficulty: 4,
+      baseTimeLimit: 3,
+      config: {
+        speed: 'extreme',
+        variant: `extreme_v${i - 48}`
+      },
+      tags: ['反应', '极限'],
+    });
+  }
+
+  // 51-75: 混合关卡
+  for (let i = 51; i <= 75; i++) {
+    const types = ['reaction', 'memory', 'math', 'judgment', 'spatial'] as const;
+    const typeIndex = Math.floor((i - 51) / 5) % types.length;
+
+    variants.push({
+      id: `CH${i.toString().padStart(2, '0')}`,
+      name: `混合挑战${i - 50}`,
+      description: '多机制混合关卡',
+      type: types[typeIndex],
+      dimension: i % 3 === 0 ? '3D' : '2D',
+      difficulty: clampDifficulty(2 + (i - 51) / 8),
+      baseTimeLimit: 10 - Math.floor((i - 51) / 10),
+      config: {
+        hybrid: true,
+        complexity: Math.floor((i - 50) / 5),
+        variant: `hybrid_v${i - 50}`
+      },
+      tags: ['混合', '进阶'],
+    });
+  }
+
+  // 76-100: 创新关卡
+  for (let i = 76; i <= 100; i++) {
+    variants.push({
+      id: `CH${i.toString().padStart(2, '0')}`,
+      name: `创新挑战${i - 75}`,
+      description: '创新玩法关卡',
+      type: '综合',
+      dimension: i % 4 === 0 ? '3D' : '2D',
+      difficulty: clampDifficulty(3 + (i - 76) / 10),
+      baseTimeLimit: 12 - Math.floor((i - 76) / 12),
+      config: {
+        innovative: true,
+        level: i - 75,
+        variant: `innovative_v${i - 75}`
+      },
+      tags: ['创新', '高级'],
+    });
+  }
+
+  return variants;
+}
+
+// 生成扩展关卡
+const VARIANT_CHALLENGES = generateVariantChallenges();
+
+// 合并所有关卡 (1-100)
+export const ALL_CHALLENGES = [...BASE_CHALLENGES, ...VARIANT_CHALLENGES];
 
 // ============ 工具函数 ============
 

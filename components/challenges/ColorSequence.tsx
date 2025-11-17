@@ -37,7 +37,8 @@ export function ColorSequence({ challenge, onComplete, onMistake }: ColorSequenc
 
   useEffect(() => {
     // 生成随机序列
-    const length = Math.min(challenge.config.targets, 8);
+    const { targets = 4 } = challenge.config;
+    const length = Math.min(targets, 8);
     const seq: number[] = [];
     for (let i = 0; i < length; i++) {
       seq.push(Math.floor(Math.random() * 4));

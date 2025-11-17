@@ -18,8 +18,8 @@ export type StarRating = 0 | 1 | 2 | 3;
 
 export interface ChallengeConfig {
   // 目标元素配置
-  targets: number;              // 目标数量
-  distractors: number;          // 干扰项数量
+  targets?: number;              // 目标数量
+  distractors?: number;          // 干扰项数量
 
   // 视觉元素
   colors?: string[];            // 可用颜色
@@ -30,6 +30,17 @@ export interface ChallengeConfig {
   similarity?: number;          // 相似度 0-1
   rotationSpeed?: number;       // 旋转速度（3D）
   complexity?: number;          // 复杂度
+
+  // 变体关卡参数
+  variant?: string;             // 变体类型标识
+  hybrid?: boolean;             // 是否混合关卡
+  innovative?: boolean;         // 是否创新关卡
+  level?: number;               // 关卡等级
+  items?: number;               // 记忆项数量
+  speed?: string;               // 速度等级
+
+  // 通用扩展属性
+  [key: string]: any;           // 允许任意额外配置
 }
 
 export type ShapeType = 'circle' | 'square' | 'triangle' | 'pentagon' | 'hexagon' | 'star';

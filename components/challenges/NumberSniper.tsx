@@ -26,7 +26,8 @@ export function NumberSniper({ challenge, onComplete, onMistake }: NumberSniperP
   const [targetValue, setTargetValue] = useState(0);
 
   useEffect(() => {
-    const total = challenge.config.targets + challenge.config.distractors;
+    const { targets = 1, distractors = 7 } = challenge.config;
+    const total = targets + distractors;
     const min = 1;
     const max = 99;
 

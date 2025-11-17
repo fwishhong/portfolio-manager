@@ -26,7 +26,8 @@ export function FlashDodge({ challenge, onComplete, onMistake }: FlashDodgeProps
   const [clicks, setClicks] = useState(0);
 
   useEffect(() => {
-    setClicksNeeded(challenge.config.targets);
+    const { targets = 5 } = challenge.config;
+    setClicksNeeded(targets);
 
     // 生成危险区域
     const dangerZones: DangerZone[] = [];

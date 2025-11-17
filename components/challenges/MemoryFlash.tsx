@@ -62,7 +62,7 @@ export function MemoryFlash({ challenge, onComplete, onMistake }: MemoryFlashPro
   }, [phase]);
 
   const generateCards = () => {
-    const { targets } = challenge.config;
+    const { targets = 3 } = challenge.config;
     const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#95E1D3', '#A8E6CF'];
     const symbols = ['★', '●', '■', '▲', '◆'];
 
