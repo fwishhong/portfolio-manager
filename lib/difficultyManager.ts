@@ -45,20 +45,20 @@ export class DifficultyManager {
     // 基础难度
     let difficulty = baseDifficulty;
 
-    // 连续成功增加难度
-    difficulty += this.successStreak * 0.1;
+    // 连续成功增加难度（更温和）
+    difficulty += this.successStreak * 0.05;
 
-    // 连续失败降低难度
-    difficulty -= this.failStreak * 0.2;
+    // 连续失败降低难度（更明显，帮助玩家）
+    difficulty -= this.failStreak * 0.25;
 
     // 根据平均完成时间微调
     const avgTimeRatio = this.getAverageTimeRatio();
-    if (avgTimeRatio < 0.3) {
+    if (avgTimeRatio < 0.25) {
       // 完成太快，增加难度
-      difficulty += 0.3;
-    } else if (avgTimeRatio > 0.8) {
+      difficulty += 0.2;
+    } else if (avgTimeRatio > 0.85) {
       // 完成太慢，降低难度
-      difficulty -= 0.2;
+      difficulty -= 0.3;
     }
 
     // 限制在1-5范围内
@@ -115,10 +115,10 @@ export class DifficultyManager {
    * 调整时间限制
    */
   private adjustTimeLimit(baseTime: number, multiplier: number): number {
-    // 难度倍率越高，时间越少（但保留至少50%的时间）
-    const minTime = baseTime * 0.5;
-    const maxTime = baseTime * 1.5;
-    const adjusted = baseTime * (2 - multiplier * 0.3);
+    // 难度倍率越高，时间越少（但保留至少60%的时间，更友好）
+    const minTime = baseTime * 0.6;
+    const maxTime = baseTime * 1.4;
+    const adjusted = baseTime * (2 - multiplier * 0.25);
 
     return Math.max(minTime, Math.min(maxTime, adjusted));
   }

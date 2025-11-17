@@ -16,6 +16,14 @@ import { ShapeBlitz } from '@/components/challenges/ShapeBlitz';
 import { QuickMath } from '@/components/challenges/QuickMath';
 import { MemoryFlash } from '@/components/challenges/MemoryFlash';
 import { TrueFalse } from '@/components/challenges/TrueFalse';
+import { NumberSniper } from '@/components/challenges/NumberSniper';
+import { FlashDodge } from '@/components/challenges/FlashDodge';
+import { ColorSequence } from '@/components/challenges/ColorSequence';
+import { NumberCompare } from '@/components/challenges/NumberCompare';
+import { OddEvenSort } from '@/components/challenges/OddEvenSort';
+import { DirectionGuide } from '@/components/challenges/DirectionGuide';
+import { ReverseThinking } from '@/components/challenges/ReverseThinking';
+import { StroopEffect } from '@/components/challenges/StroopEffect';
 
 // 3D关卡暂时禁用以避免构建问题
 // import { CubeMemory } from '@/components/challenges/CubeMemory';
@@ -35,8 +43,11 @@ export function GameEngine({ onGameOver }: GameEngineProps) {
     setMistakes(0);
     setStartTime(Date.now());
 
-    // 随机选择一个关卡（当前只有实现的关卡）
-    const availableChallenges = ['CH01', 'CH02', 'CH10', 'CH06', 'CH14'];
+    // 随机选择一个关卡（已实现的13个关卡）
+    const availableChallenges = [
+      'CH01', 'CH02', 'CH03', 'CH04', 'CH06', 'CH07',
+      'CH10', 'CH11', 'CH14', 'CH15', 'CH17', 'CH23', 'CH24'
+    ];
     const randomId = availableChallenges[Math.floor(Math.random() * availableChallenges.length)];
     const nextChallenge = getChallengeById(randomId);
 
@@ -137,23 +148,50 @@ function renderChallenge(
   };
 
   switch (challenge.id) {
+    // 反应速度型
     case 'CH01':
       return <ColorHunter {...commonProps} />;
     case 'CH02':
       return <ShapeBlitz {...commonProps} />;
-    case 'CH10':
-      return <QuickMath {...commonProps} />;
+    case 'CH03':
+      return <NumberSniper {...commonProps} />;
+    case 'CH04':
+      return <FlashDodge {...commonProps} />;
+
+    // 记忆力型
     case 'CH06':
       return <MemoryFlash {...commonProps} />;
+    case 'CH07':
+      return <ColorSequence {...commonProps} />;
+
+    // 数学计算型
+    case 'CH10':
+      return <QuickMath {...commonProps} />;
+    case 'CH11':
+      return <NumberCompare {...commonProps} />;
+
+    // 判断力型
     case 'CH14':
       return <TrueFalse {...commonProps} />;
+    case 'CH15':
+      return <OddEvenSort {...commonProps} />;
+    case 'CH17':
+      return <DirectionGuide {...commonProps} />;
+
+    // 综合挑战型
+    case 'CH23':
+      return <ReverseThinking {...commonProps} />;
+    case 'CH24':
+      return <StroopEffect {...commonProps} />;
+
+    // 3D关卡暂时禁用
     case 'CH08':
-      // 3D关卡暂时禁用
       return (
         <div className="challenge-not-found">
           <p>3D关卡暂时不可用</p>
         </div>
       );
+
     default:
       return (
         <div className="challenge-not-found">
