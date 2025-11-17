@@ -3,8 +3,9 @@
  */
 
 import { create } from 'zustand';
-import { GameState, Challenge, ChallengeResult, GameSession, PlayerStats } from '@/types/game';
+import { GameState, Challenge, ChallengeResult, GameSession, PlayerStats, Achievement } from '@/types/game';
 import { savePlayerStats, loadPlayerStats, saveSession } from './storage';
+import { getAchievementManager } from './achievementSystem';
 
 interface GameStore extends GameState {
   // Actions
@@ -20,6 +21,13 @@ interface GameStore extends GameState {
   loseLife: () => void;
   setPlaying: (playing: boolean) => void;
   setPaused: (paused: boolean) => void;
+  // Achievement methods
+  checkAchievements: () => Achievement[];
+  unlockSpecialAchievement: (id: string) => boolean;
+  getNewAchievements: () => Achievement[];
+  clearNewAchievements: () => void;
+  // Internal state for new achievements
+  newAchievements: Achievement[];
 }
 
 const initialPlayerStats: PlayerStats = {
@@ -55,6 +63,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   lives: 3,
   combo: 0,
   playerStats: loadPlayerStats() || initialPlayerStats,
+  newAchievements: [],
 
   // Actions
   startGame: (mode) => {
@@ -89,7 +98,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   completeChallenge: (result) => {
-    const { currentSession, combo, playerStats } = get();
+    const { currentSession, combo, playerStats, currentChallenge } = get();
 
     if (!currentSession) return;
 
@@ -108,13 +117,62 @@ export const useGameStore = create<GameStore>((set, get) => ({
       results: [...currentSession.results, result],
     };
 
+    // 更新分类统计
+    const categoryIncrement = result.success ? 1 : 0;
+    const categoryUpdates: Partial<PlayerStats> = {};
+
+    if (currentChallenge) {
+      switch (currentChallenge.type) {
+        case 'reaction':
+          categoryUpdates.reactionCount = (playerStats.reactionCount || 0) + categoryIncrement;
+          break;
+        case 'memory':
+          categoryUpdates.memoryCount = (playerStats.memoryCount || 0) + categoryIncrement;
+          break;
+        case 'math':
+          categoryUpdates.mathCount = (playerStats.mathCount || 0) + categoryIncrement;
+          break;
+        case 'judgment':
+          categoryUpdates.judgmentCount = (playerStats.judgmentCount || 0) + categoryIncrement;
+          break;
+        case 'spatial':
+          categoryUpdates.spatialCount = (playerStats.spatialCount || 0) + categoryIncrement;
+          break;
+      }
+    }
+
     // 更新玩家统计
     const updatedStats: PlayerStats = {
       ...playerStats,
+      ...categoryUpdates,
       totalChallengesCompleted: playerStats.totalChallengesCompleted + 1,
       totalScore: playerStats.totalScore + result.score,
       highestScore: Math.max(playerStats.highestScore, updatedSession.totalScore),
     };
+
+    // 检查成就
+    const achievementManager = getAchievementManager(playerStats.achievements);
+
+    // 检查速度成就
+    const speedAchievements = achievementManager.checkSpeedAchievement(result.timeUsed);
+
+    // 检查其他成就
+    const regularAchievements = achievementManager.checkAchievements({
+      challengesCompleted: updatedStats.totalChallengesCompleted,
+      perfectCount: updatedSession.perfectCount,
+      maxCombo,
+      highestScore: updatedStats.highestScore,
+      reactionCount: updatedStats.reactionCount || 0,
+      memoryCount: updatedStats.memoryCount || 0,
+      mathCount: updatedStats.mathCount || 0,
+      judgmentCount: updatedStats.judgmentCount || 0,
+      spatialCount: updatedStats.spatialCount || 0,
+    });
+
+    const newUnlocked = [...speedAchievements, ...regularAchievements];
+
+    // 更新成就列表
+    updatedStats.achievements = achievementManager.serialize();
 
     // 保存到本地存储
     savePlayerStats(updatedStats);
@@ -123,6 +181,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       currentSession: updatedSession,
       combo: newCombo,
       playerStats: updatedStats,
+      newAchievements: newUnlocked,
     });
   },
 
@@ -213,5 +272,64 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   setPaused: (paused) => {
     set({ isPaused: paused });
+  },
+
+  // Achievement methods
+  checkAchievements: () => {
+    const { playerStats, currentSession } = get();
+    const achievementManager = getAchievementManager(playerStats.achievements);
+
+    const newAchievements = achievementManager.checkAchievements({
+      challengesCompleted: playerStats.totalChallengesCompleted,
+      perfectCount: currentSession?.perfectCount || 0,
+      maxCombo: currentSession?.maxCombo || 0,
+      highestScore: playerStats.highestScore,
+      reactionCount: playerStats.reactionCount || 0,
+      memoryCount: playerStats.memoryCount || 0,
+      mathCount: playerStats.mathCount || 0,
+      judgmentCount: playerStats.judgmentCount || 0,
+      spatialCount: playerStats.spatialCount || 0,
+    });
+
+    if (newAchievements.length > 0) {
+      const updatedStats = {
+        ...playerStats,
+        achievements: achievementManager.serialize(),
+      };
+      savePlayerStats(updatedStats);
+      set({ playerStats: updatedStats, newAchievements });
+    }
+
+    return newAchievements;
+  },
+
+  unlockSpecialAchievement: (id) => {
+    const { playerStats } = get();
+    const achievementManager = getAchievementManager(playerStats.achievements);
+
+    const unlocked = achievementManager.unlockSpecialAchievement(id);
+
+    if (unlocked) {
+      const updatedStats = {
+        ...playerStats,
+        achievements: achievementManager.serialize(),
+      };
+      savePlayerStats(updatedStats);
+
+      const achievement = achievementManager.getAllAchievements().find(a => a.id === id);
+      if (achievement) {
+        set({ playerStats: updatedStats, newAchievements: [achievement] });
+      }
+    }
+
+    return unlocked;
+  },
+
+  getNewAchievements: () => {
+    return get().newAchievements;
+  },
+
+  clearNewAchievements: () => {
+    set({ newAchievements: [] });
   },
 }));

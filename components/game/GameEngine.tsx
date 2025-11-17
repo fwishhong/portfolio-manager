@@ -8,7 +8,8 @@ import { getRandomChallenge, getChallengeById } from '@/lib/challengeDefinitions
 import { DifficultyManager } from '@/lib/difficultyManager';
 import { createChallengeResult } from '@/lib/scoreCalculator';
 import { audioManager } from '@/lib/audioManager';
-import { Challenge } from '@/types/game';
+import { Challenge, Achievement } from '@/types/game';
+import { AchievementNotification } from './AchievementNotification';
 
 // 导入2D关卡组件 (CH01-CH25)
 import { ColorHunter } from '@/components/challenges/ColorHunter';
@@ -44,10 +45,12 @@ interface GameEngineProps {
 }
 
 export function GameEngine({ onGameOver }: GameEngineProps) {
-  const { loadChallenge, currentChallenge, completeChallenge, combo, isGameOver } = useGameStore();
+  const { loadChallenge, currentChallenge, completeChallenge, combo, isGameOver, getNewAchievements, clearNewAchievements } = useGameStore();
   const [difficultyManager] = useState(() => new DifficultyManager());
   const [startTime, setStartTime] = useState(0);
   const [mistakes, setMistakes] = useState(0);
+  const [currentAchievement, setCurrentAchievement] = useState<Achievement | null>(null);
+  const [achievementQueue, setAchievementQueue] = useState<Achievement[]>([]);
 
   // 加载下一个关卡
   const loadNextChallenge = () => {
@@ -93,6 +96,23 @@ export function GameEngine({ onGameOver }: GameEngineProps) {
       onGameOver();
     }
   }, [isGameOver, onGameOver]);
+
+  // 成就通知处理
+  useEffect(() => {
+    const newAchievements = getNewAchievements();
+    if (newAchievements.length > 0 && achievementQueue.length === 0) {
+      setAchievementQueue(newAchievements);
+      clearNewAchievements();
+    }
+  }, [getNewAchievements, achievementQueue.length, clearNewAchievements]);
+
+  // 显示成就队列中的下一个成就
+  useEffect(() => {
+    if (!currentAchievement && achievementQueue.length > 0) {
+      setCurrentAchievement(achievementQueue[0]);
+      setAchievementQueue(prev => prev.slice(1));
+    }
+  }, [currentAchievement, achievementQueue]);
 
   // 处理关卡完成
   const handleChallengeComplete = (success: boolean) => {
@@ -143,9 +163,15 @@ export function GameEngine({ onGameOver }: GameEngineProps) {
   }
 
   return (
-    <div className="game-engine">
-      {renderChallenge(currentChallenge, handleChallengeComplete, handleMistake)}
-    </div>
+    <>
+      <div className="game-engine">
+        {renderChallenge(currentChallenge, handleChallengeComplete, handleMistake)}
+      </div>
+      <AchievementNotification
+        achievement={currentAchievement}
+        onClose={() => setCurrentAchievement(null)}
+      />
+    </>
   );
 }
 
