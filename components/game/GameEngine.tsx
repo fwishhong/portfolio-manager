@@ -25,8 +25,8 @@ import { DirectionGuide } from '@/components/challenges/DirectionGuide';
 import { ReverseThinking } from '@/components/challenges/ReverseThinking';
 import { StroopEffect } from '@/components/challenges/StroopEffect';
 
-// 3D关卡暂时禁用以避免构建问题
-// import { CubeMemory } from '@/components/challenges/CubeMemory';
+// 3D关卡
+import { CubeMemory } from '@/components/challenges/CubeMemory';
 
 interface GameEngineProps {
   onGameOver?: () => void;
@@ -43,9 +43,9 @@ export function GameEngine({ onGameOver }: GameEngineProps) {
     setMistakes(0);
     setStartTime(Date.now());
 
-    // 随机选择一个关卡（已实现的13个关卡）
+    // 随机选择一个关卡（已实现的14个关卡，包含1个3D关卡）
     const availableChallenges = [
-      'CH01', 'CH02', 'CH03', 'CH04', 'CH06', 'CH07',
+      'CH01', 'CH02', 'CH03', 'CH04', 'CH06', 'CH07', 'CH08',
       'CH10', 'CH11', 'CH14', 'CH15', 'CH17', 'CH23', 'CH24'
     ];
     const randomId = availableChallenges[Math.floor(Math.random() * availableChallenges.length)];
@@ -163,6 +163,8 @@ function renderChallenge(
       return <MemoryFlash {...commonProps} />;
     case 'CH07':
       return <ColorSequence {...commonProps} />;
+    case 'CH08':
+      return <CubeMemory {...commonProps} />;
 
     // 数学计算型
     case 'CH10':
@@ -183,14 +185,6 @@ function renderChallenge(
       return <ReverseThinking {...commonProps} />;
     case 'CH24':
       return <StroopEffect {...commonProps} />;
-
-    // 3D关卡暂时禁用
-    case 'CH08':
-      return (
-        <div className="challenge-not-found">
-          <p>3D关卡暂时不可用</p>
-        </div>
-      );
 
     default:
       return (
