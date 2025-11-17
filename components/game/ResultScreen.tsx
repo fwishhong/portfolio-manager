@@ -2,9 +2,11 @@
  * 结算页面组件
  */
 
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useGameStore } from '@/lib/gameStore';
 import { generatePerformanceReport } from '@/lib/scoreCalculator';
+import { audioManager } from '@/lib/audioManager';
 
 interface ResultScreenProps {
   onRestart: () => void;
@@ -20,6 +22,30 @@ export function ResultScreen({ onRestart, onMainMenu }: ResultScreenProps) {
     currentSession.results,
     currentSession.maxCombo
   );
+
+  // 播放成就音效
+  useEffect(() => {
+    // 根据评级播放不同音效
+    if (report.rank === 'S' || report.rank === 'S+') {
+      audioManager.play('achievement', 1.0);
+      setTimeout(() => audioManager.play('star', 0.8), 600);
+    } else if (report.rank === 'A' || report.rank === 'A+') {
+      audioManager.play('achievement', 0.9);
+    } else if (report.rank === 'B' || report.rank === 'B+') {
+      audioManager.play('bonus', 0.8);
+    } else {
+      audioManager.play('success', 0.7);
+    }
+
+    // 如果有完美通关，额外播放星星音效
+    if (report.perfectCount > 0) {
+      setTimeout(() => {
+        for (let i = 0; i < Math.min(report.perfectCount, 3); i++) {
+          setTimeout(() => audioManager.play('star', 0.6), i * 200);
+        }
+      }, 800);
+    }
+  }, [report]);
 
   return (
     <motion.div
@@ -90,7 +116,10 @@ export function ResultScreen({ onRestart, onMainMenu }: ResultScreenProps) {
         <div className="result-buttons">
           <motion.button
             className="btn btn-primary"
-            onClick={onRestart}
+            onClick={() => {
+              audioManager.play('click');
+              setTimeout(onRestart, 100);
+            }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -99,7 +128,10 @@ export function ResultScreen({ onRestart, onMainMenu }: ResultScreenProps) {
 
           <motion.button
             className="btn btn-secondary"
-            onClick={onMainMenu}
+            onClick={() => {
+              audioManager.play('click');
+              setTimeout(onMainMenu, 100);
+            }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >

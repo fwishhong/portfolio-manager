@@ -1,5 +1,6 @@
 /**
  * 游戏页面 - 动态路由
+ * 集成主题系统
  */
 
 import { useEffect, useState } from 'react';
@@ -8,11 +9,14 @@ import { useGameStore } from '@/lib/gameStore';
 import { GameEngine } from '@/components/game/GameEngine';
 import { HUD } from '@/components/game/HUD';
 import { ResultScreen } from '@/components/game/ResultScreen';
+import { ThemeProvider, useTheme } from '@/components/game/ThemeProvider';
+import { motion } from 'framer-motion';
 
-export default function GamePage() {
+function GameContent() {
   const router = useRouter();
   const { mode } = router.query;
-  const { startGame, resetGame, isGameOver } = useGameStore();
+  const { startGame, resetGame, isGameOver, currentChallenge } = useGameStore();
+  const { currentTheme, setThemeByChallenge } = useTheme();
   const [showResult, setShowResult] = useState(false);
 
   useEffect(() => {
@@ -28,6 +32,13 @@ export default function GamePage() {
     }
   }, [isGameOver]);
 
+  // 当关卡变化时更新主题
+  useEffect(() => {
+    if (currentChallenge) {
+      setThemeByChallenge(currentChallenge);
+    }
+  }, [currentChallenge]);
+
   const handleRestart = () => {
     setShowResult(false);
     resetGame();
@@ -41,44 +52,33 @@ export default function GamePage() {
     router.push('/game');
   };
 
-  if (!mode) {
-    return (
-      <div className="loading-page">
-        <div className="loading-spinner"></div>
-        <p>加载中...</p>
-
-        <style jsx>{`
-          .loading-page {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-          }
-
-          .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-          }
-
-          @keyframes spin {
-            to {
-              transform: rotate(360deg);
-            }
-          }
-        `}</style>
-      </div>
-    );
-  }
+  const colors = currentTheme.colors;
 
   return (
-    <div className="game-page">
+    <motion.div
+      className="game-page"
+      animate={{
+        background: colors.backgroundGradient,
+      }}
+      transition={{ duration: 0.8, ease: 'easeInOut' }}
+    >
+      {/* 主题指示器 */}
+      <div className="theme-indicator" style={{
+        position: 'absolute',
+        top: '16px',
+        right: '24px',
+        padding: '8px 16px',
+        background: `${colors.primary}30`,
+        border: `1px solid ${colors.border}`,
+        borderRadius: '8px',
+        fontSize: '12px',
+        color: colors.text,
+        fontWeight: 600,
+        zIndex: 1000,
+      }}>
+        {currentTheme.displayName}
+      </div>
+
       {!showResult ? (
         <>
           <HUD />
@@ -660,6 +660,14 @@ export default function GamePage() {
           }
         }
       `}</style>
-    </div>
+    </motion.div>
+  );
+}
+
+export default function GamePage() {
+  return (
+    <ThemeProvider>
+      <GameContent />
+    </ThemeProvider>
   );
 }
