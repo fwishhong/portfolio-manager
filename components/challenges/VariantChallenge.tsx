@@ -1,6 +1,6 @@
 /**
  * 通用变体关卡组件
- * 处理CH26-CH100的所有变体关卡
+ * 处理CH26-CH200的所有变体关卡
  */
 
 'use client';
@@ -39,6 +39,16 @@ export function VariantChallenge({ challenge, onComplete, onMistake }: VariantCh
       generateHybridChallenge();
     } else if (variant?.startsWith('innovative_v')) {
       generateInnovativeChallenge();
+    } else if (variant?.startsWith('super_v')) {
+      generateSuperChallenge();
+    } else if (variant?.startsWith('combo_plus_v')) {
+      generateComboPlusChallenge();
+    } else if (variant?.startsWith('speed_precision_v')) {
+      generateSpeedPrecisionChallenge();
+    } else if (variant?.startsWith('strategy_v')) {
+      generateStrategyChallenge();
+    } else if (variant?.startsWith('master_v')) {
+      generateMasterChallenge();
     } else {
       // 默认：颜色挑战
       generateColorChallenge();
@@ -174,6 +184,141 @@ export function VariantChallenge({ challenge, onComplete, onMistake }: VariantCh
       x: Math.random() * 80 + 10,
       y: Math.random() * 70 + 10,
     })));
+  };
+
+  const generateSuperChallenge = () => {
+    // 超级挑战：更多目标和干扰项
+    const colors = ['#EF4444', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#F97316', '#06B6D4'];
+    const targetColor = colors[Math.floor(Math.random() * colors.length)];
+    setTarget({ type: 'color', value: targetColor });
+
+    const targets = challenge.config.targets || 5;
+    const distractors = challenge.config.distractors || 15;
+    const count = targets + distractors;
+
+    const newItems = Array.from({ length: count }, (_, i) => ({
+      id: i,
+      color: i < targets ? targetColor : colors[Math.floor(Math.random() * colors.length)],
+      shape: ['circle', 'square', 'triangle', 'star'][Math.floor(Math.random() * 4)],
+      x: Math.random() * 85 + 5,
+      y: Math.random() * 75 + 5,
+      size: 30 + Math.random() * 20,
+    }));
+    setItems(newItems.sort(() => Math.random() - 0.5));
+  };
+
+  const generateComboPlusChallenge = () => {
+    // 组合Plus：多机制混合
+    const colors = ['#EF4444', '#3B82F6', '#10B981'];
+    const shapes = ['circle', 'square', 'triangle'];
+    const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+    setTarget({
+      type: 'combo_plus',
+      color: colors[0],
+      shape: shapes[0],
+      number: 5,
+      needsAll: true
+    });
+
+    const newItems = Array.from({ length: 12 }, (_, i) => ({
+      id: i,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      shape: shapes[Math.floor(Math.random() * shapes.length)],
+      number: numbers[Math.floor(Math.random() * numbers.length)],
+      x: Math.random() * 80 + 10,
+      y: Math.random() * 70 + 10,
+    }));
+
+    newItems[0] = { ...newItems[0], color: colors[0], shape: shapes[0], number: 5 };
+    setItems(newItems.sort(() => Math.random() - 0.5));
+  };
+
+  const generateSpeedPrecisionChallenge = () => {
+    // 速度精度：快速移动目标
+    setTarget({ type: 'speed_precision', hits: 0, required: challenge.config.targets || 8 });
+
+    const item = {
+      id: 0,
+      x: 50,
+      y: 50,
+      vx: (Math.random() - 0.5) * 4,
+      vy: (Math.random() - 0.5) * 4,
+    };
+
+    setItems([item]);
+
+    // 移动目标
+    const interval = setInterval(() => {
+      setItems(prev => {
+        const updated = prev.map(p => {
+          let newX = p.x + p.vx;
+          let newY = p.y + p.vy;
+          let newVx = p.vx;
+          let newVy = p.vy;
+
+          if (newX < 5 || newX > 95) newVx = -newVx;
+          if (newY < 5 || newY > 95) newVy = -newVy;
+
+          newX = Math.max(5, Math.min(95, newX));
+          newY = Math.max(5, Math.min(95, newY));
+
+          return { ...p, x: newX, y: newY, vx: newVx, vy: newVy };
+        });
+        return updated;
+      });
+    }, 50);
+
+    return () => clearInterval(interval);
+  };
+
+  const generateStrategyChallenge = () => {
+    // 策略思考：需要规划步骤
+    const steps = challenge.config.steps || 4;
+    const sequence = Array.from({ length: steps }, (_, i) => ({
+      id: i,
+      value: i + 1,
+      color: `hsl(${i * 60}, 70%, 50%)`,
+      completed: false
+    }));
+
+    setTarget({ type: 'strategy', sequence, currentStep: 0 });
+    setItems(sequence.sort(() => Math.random() - 0.5).map((item, i) => ({
+      ...item,
+      x: (i % 3) * 30 + 10,
+      y: Math.floor(i / 3) * 30 + 20,
+    })));
+  };
+
+  const generateMasterChallenge = () => {
+    // 大师级：所有机制组合
+    const colors = ['#EF4444', '#3B82F6', '#10B981', '#F59E0B'];
+    const shapes = ['circle', 'square', 'triangle', 'star'];
+    const numbers = Array.from({ length: 20 }, (_, i) => i + 1);
+
+    setTarget({
+      type: 'master',
+      phase: 1,
+      totalPhases: 3,
+      requirements: {
+        phase1: { type: 'color', value: colors[0], count: 3 },
+        phase2: { type: 'shape', value: shapes[1], count: 2 },
+        phase3: { type: 'number', value: 15, comparison: 'greater' }
+      },
+      progress: { phase1: 0, phase2: 0, phase3: 0 }
+    });
+
+    const count = challenge.config.targets || 10;
+    const newItems = Array.from({ length: count }, (_, i) => ({
+      id: i,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      shape: shapes[Math.floor(Math.random() * shapes.length)],
+      number: numbers[Math.floor(Math.random() * numbers.length)],
+      x: Math.random() * 80 + 10,
+      y: Math.random() * 70 + 10,
+    }));
+
+    setItems(newItems);
   };
 
   const handleItemClick = (item: any, index: number) => {

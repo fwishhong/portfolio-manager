@@ -54,11 +54,14 @@ export function GameEngine({ onGameOver }: GameEngineProps) {
     setMistakes(0);
     setStartTime(Date.now());
 
-    // 随机选择一个关卡（所有100个关卡）
+    // 随机选择一个关卡（所有200个关卡）
     // 可以通过配置控制开放的关卡范围
-    const totalChallenges = 100;
+    const totalChallenges = 200;
     const challengeNumber = Math.floor(Math.random() * totalChallenges) + 1;
-    const randomId = `CH${challengeNumber.toString().padStart(2, '0')}`;
+    // CH001-CH025使用2位数，CH026+使用3位数
+    const randomId = challengeNumber <= 99
+      ? `CH${challengeNumber.toString().padStart(2, '0')}`
+      : `CH${challengeNumber.toString().padStart(3, '0')}`;
     const nextChallenge = getChallengeById(randomId);
 
     if (!nextChallenge) return;

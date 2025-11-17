@@ -614,13 +614,124 @@ function generateVariantChallenges(): Challenge[] {
     });
   }
 
+  // 101-120: 超级变体（现有类型的极限版本）
+  for (let i = 101; i <= 120; i++) {
+    const types = ['reaction', 'memory', 'math', 'judgment', 'spatial'] as const;
+    const typeIndex = (i - 101) % types.length;
+
+    variants.push({
+      id: `CH${i.toString().padStart(3, '0')}`,
+      name: `超级挑战${i - 100}`,
+      description: '极限难度变体关卡',
+      type: types[typeIndex],
+      dimension: i % 5 === 0 ? '3D' : '2D',
+      difficulty: clampDifficulty(4 + (i - 101) / 15),
+      baseTimeLimit: Math.max(3, 8 - Math.floor((i - 101) / 5)),
+      config: {
+        targets: 3 + Math.floor((i - 101) / 4),
+        distractors: 10 + Math.floor((i - 101) / 3),
+        complexity: 8 + (i - 101),
+        variant: `super_v${i - 100}`
+      },
+      tags: ['超级', '极限'],
+    });
+  }
+
+  // 121-140: 组合挑战Plus（3-4种机制混合）
+  for (let i = 121; i <= 140; i++) {
+    variants.push({
+      id: `CH${i.toString().padStart(3, '0')}`,
+      name: `组合Plus${i - 120}`,
+      description: '多机制深度混合关卡',
+      type: '综合',
+      dimension: i % 3 === 0 ? '3D' : '2D',
+      difficulty: clampDifficulty(4 + (i - 121) / 10),
+      baseTimeLimit: Math.max(5, 12 - Math.floor((i - 121) / 4)),
+      config: {
+        hybrid: true,
+        mechanicCount: 3 + Math.floor((i - 121) / 10),
+        complexity: 10 + (i - 121),
+        variant: `combo_plus_v${i - 120}`
+      },
+      tags: ['组合Plus', '多机制'],
+    });
+  }
+
+  // 141-160: 速度与精度（极限反应+精确操作）
+  for (let i = 141; i <= 160; i++) {
+    variants.push({
+      id: `CH${i.toString().padStart(3, '0')}`,
+      name: `速度精度${i - 140}`,
+      description: '极速反应与精确判断',
+      type: 'reaction',
+      dimension: '2D',
+      difficulty: 5,
+      baseTimeLimit: Math.max(2, 5 - Math.floor((i - 141) / 8)),
+      config: {
+        speed: 'extreme',
+        precision: 'high',
+        targets: 5 + Math.floor((i - 141) / 5),
+        timeWindow: 0.5 - (i - 141) * 0.01,
+        variant: `speed_precision_v${i - 140}`
+      },
+      tags: ['速度', '精度', '极限'],
+    });
+  }
+
+  // 161-180: 策略与思考（需要规划的关卡）
+  for (let i = 161; i <= 180; i++) {
+    variants.push({
+      id: `CH${i.toString().padStart(3, '0')}`,
+      name: `策略思考${i - 160}`,
+      description: '需要深度思考和规划',
+      type: 'judgment',
+      dimension: i % 4 === 0 ? '3D' : '2D',
+      difficulty: clampDifficulty(4 + (i - 161) / 12),
+      baseTimeLimit: 15 - Math.floor((i - 161) / 5),
+      config: {
+        strategy: true,
+        planning: true,
+        steps: 3 + Math.floor((i - 161) / 5),
+        complexity: 12 + (i - 161),
+        variant: `strategy_v${i - 160}`
+      },
+      tags: ['策略', '思考', '规划'],
+    });
+  }
+
+  // 181-200: 大师级终极挑战（最高难度）
+  for (let i = 181; i <= 200; i++) {
+    variants.push({
+      id: `CH${i.toString().padStart(3, '0')}`,
+      name: `终极大师${i - 180}`,
+      description: '顶尖玩家的终极考验',
+      type: '综合',
+      dimension: i % 2 === 0 ? '3D' : '2D',
+      difficulty: 5,
+      baseTimeLimit: Math.max(3, 15 - Math.floor((i - 181) / 3)),
+      config: {
+        master: true,
+        allMechanics: true,
+        targets: 8 + Math.floor((i - 181) / 4),
+        distractors: 15 + Math.floor((i - 181) / 3),
+        complexity: 15 + (i - 181),
+        multiPhase: true,
+        variant: `master_v${i - 180}`
+      },
+      tags: ['大师', '终极', '全能'],
+    });
+  }
+
   return variants;
 }
 
 // 生成扩展关卡
 const VARIANT_CHALLENGES = generateVariantChallenges();
 
-// 合并所有关卡 (1-100)
+// 合并所有关卡 (1-200)
+// - CH01-CH25: 核心关卡（精心设计的专用组件）
+// - CH26-CH100: 变体关卡（基础变体和混合）
+// - CH101-CH200: 高级关卡（极限挑战和大师级）
 export const ALL_CHALLENGES = [...BASE_CHALLENGES, ...VARIANT_CHALLENGES];
 
 // ============ 工具函数 ============
