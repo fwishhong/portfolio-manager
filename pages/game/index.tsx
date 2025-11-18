@@ -15,6 +15,11 @@ export default function GameMenu() {
     router.push(`/game/${mode}`);
   };
 
+  // 自动跳转到normal模式（可选）
+  // useEffect(() => {
+  //   router.push('/game/normal');
+  // }, []);
+
   return (
     <div className="game-menu">
       <div className="menu-container">
