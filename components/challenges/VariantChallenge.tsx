@@ -904,39 +904,47 @@ export function VariantChallenge({ challenge, onComplete, onMistake }: VariantCh
 
     switch (target.type) {
       case 'color':
-        return <span>点击 <span style={{ color: target.value, fontWeight: 'bold' }}>这个颜色</span></span>;
+        return <span>点击 <span style={{ color: target.value, fontWeight: 'bold' }}>这个颜色</span> 的所有图形</span>;
       case 'shape':
-        return `点击所有 ${target.value}`;
+        return `点击所有 ${target.value} 形状`;
       case 'math':
-        return `${target.question} = ?`;
+        return `计算结果: ${target.question} = ?`;
       case 'memory':
-        return target.missingIndex !== undefined ? '哪个消失了？' : '记住这些！';
+        return target.missingIndex !== undefined ? '❓ 点击消失的物品' : '👀 记住这些物品的位置！';
       case 'extreme':
-        return `快速点击！(${target.clicks}/${target.targetClicks})`;
+        return `⚡ 快速点击移动的目标！(${target.clicks}/${target.targetClicks})`;
       case 'hybrid':
-        return <span>点击 <span style={{ color: target.color }}>这个颜色</span> 的 {target.shape}</span>;
+        return <span>🎯 点击 <span style={{ color: target.color, fontWeight: 'bold' }}>这个颜色</span> 的 {target.shape} 形状</span>;
       case 'innovative':
-        return `按顺序点击 1→10 (当前: ${target.currentIndex + 1})`;
+        return `🔢 按数字顺序点击 1→10 (当前: ${target.currentIndex + 1})`;
+      case 'speed_precision':
+        return `💨 快速点击移动的圆点 (${target.hits}/${target.required})`;
+      case 'combo_plus':
+        return `🎨 点击同时符合：颜色、形状、数字的物品`;
+      case 'strategy':
+        return `🧠 按正确顺序点击所有步骤 (步骤 ${target.currentStep + 1}/${target.sequence?.length || 4})`;
+      case 'super':
+        return <span>⭐ 点击 <span style={{ color: target.value, fontWeight: 'bold' }}>这个颜色</span> 的所有图形</span>;
       case 'physics':
         return `⚛️ 点击移动的物体 (${target.hits}/${target.required})`;
       case 'logic':
-        if (target.logicType === 'pattern') return '🧩 找出缺失的图案';
+        if (target.logicType === 'pattern') return '🧩 找出缺失的图案并点击';
         if (target.logicType === 'number_sequence') return `🎯 点击数字: ${target.targetNumber}`;
         return '🎯 逻辑挑战';
       case 'coordination':
-        return `🎮 控制器 ${target.activeController + 1} - 点击它！(${target.completedActions}/${target.required})`;
+        return `🎮 点击发光的控制器 ${target.activeController + 1} (${target.completedActions}/${target.required})`;
       case 'ultimate':
-        return `🔥 终极挑战：点击红色圆形 (${target.progress}/5)`;
+        return `🔥 终极挑战：点击所有红色圆形 (${target.progress}/5)`;
       case 'time':
-        return `⏰ ${target.timeType === 'slowmo' ? '慢动作' : '加速'}模式 - 点击绿色目标 (${target.hits}/${target.required})`;
+        return `⏰ ${target.timeType === 'slowmo' ? '慢动作' : target.timeType === 'speedup' ? '加速' : '正常'}模式 - 点击绿色目标 (${target.hits}/${target.required})`;
       case 'dimension':
-        return `🌀 维度 ${target.currentDimension + 1} - 收集物品 (${target.collected}/${target.required})`;
+        return `🌀 当前维度 ${target.currentDimension + 1} - 点击🌀切换维度，收集💎物品 (${target.collected}/${target.required})`;
       case 'perception':
-        return `👁️ 感知挑战 - 点击真实目标 (${target.correct}/${target.required})`;
+        return `👁️ 感知挑战 - 找出真实的目标并点击 (${target.correct}/${target.required})`;
       case 'transcendent':
-        return `👹 Boss战 阶段${target.currentPhase}/${target.totalPhases} - Boss生命: ${target.bossHealth}%`;
+        return `👹 Boss战 第${target.currentPhase}/${target.totalPhases}阶段 - 点击⭐攻击Boss！生命: ${target.bossHealth}%`;
       default:
-        return challenge.description;
+        return challenge.description || '点击正确的目标完成挑战！';
     }
   };
 
