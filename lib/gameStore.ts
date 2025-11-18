@@ -75,6 +75,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   // Actions
   startGame: (mode) => {
+    console.log('🎮 startGame called with mode:', mode);
     const session: GameSession = {
       sessionId: `session-${Date.now()}`,
       mode: mode as any,
@@ -87,6 +88,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       results: [],
     };
 
+    console.log('📦 Session created:', session);
+
     set({
       currentSession: session,
       isPlaying: true,
@@ -94,6 +97,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       lives: 3,
       combo: 0,
     });
+
+    console.log('✅ Game state updated');
   },
 
   loadChallenge: (challenge) => {

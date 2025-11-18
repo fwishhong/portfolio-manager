@@ -45,7 +45,7 @@ interface GameEngineProps {
 }
 
 export function GameEngine({ onGameOver }: GameEngineProps) {
-  const { loadChallenge, currentChallenge, completeChallenge, combo, isGameOver, getNewAchievements, clearNewAchievements } = useGameStore();
+  const { loadChallenge, currentChallenge, completeChallenge, combo, isGameOver, currentSession, getNewAchievements, clearNewAchievements } = useGameStore();
   const [difficultyManager] = useState(() => new DifficultyManager());
   const [startTime, setStartTime] = useState(0);
   const [mistakes, setMistakes] = useState(0);
@@ -54,6 +54,8 @@ export function GameEngine({ onGameOver }: GameEngineProps) {
 
   // 加载下一个关卡
   const loadNextChallenge = () => {
+    console.log('🎮 loadNextChallenge called, currentSession:', currentSession);
+
     setMistakes(0);
     setStartTime(Date.now());
 
@@ -65,9 +67,16 @@ export function GameEngine({ onGameOver }: GameEngineProps) {
     const randomId = challengeNumber <= 99
       ? `CH${challengeNumber.toString().padStart(2, '0')}`
       : `CH${challengeNumber.toString().padStart(3, '0')}`;
+
+    console.log('🎯 Attempting to load challenge:', randomId);
     const nextChallenge = getChallengeById(randomId);
 
-    if (!nextChallenge) return;
+    if (!nextChallenge) {
+      console.error('❌ Challenge not found:', randomId);
+      return;
+    }
+
+    console.log('✅ Challenge found:', nextChallenge.name);
 
     const adjusted = difficultyManager.adjustChallenge(nextChallenge);
 
@@ -85,10 +94,15 @@ export function GameEngine({ onGameOver }: GameEngineProps) {
     loadChallenge(adjustedChallenge);
   };
 
-  // 游戏开始时加载第一个关卡
+  // 游戏开始时加载第一个关卡 - 只在 currentSession 存在时加载
   useEffect(() => {
-    loadNextChallenge();
-  }, []);
+    if (currentSession) {
+      console.log('🚀 Session exists, loading first challenge');
+      loadNextChallenge();
+    } else {
+      console.log('⏳ Waiting for session to be created...');
+    }
+  }, [currentSession]);
 
   // 游戏结束处理
   useEffect(() => {
