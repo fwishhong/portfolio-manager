@@ -49,6 +49,22 @@ export function VariantChallenge({ challenge, onComplete, onMistake }: VariantCh
       generateStrategyChallenge();
     } else if (variant?.startsWith('master_v')) {
       generateMasterChallenge();
+    } else if (variant?.startsWith('physics_v')) {
+      generatePhysicsChallenge();
+    } else if (variant?.startsWith('logic_v')) {
+      generateLogicChallenge();
+    } else if (variant?.startsWith('coord_v')) {
+      generateCoordinationChallenge();
+    } else if (variant?.startsWith('ultimate_v')) {
+      generateUltimateChallenge();
+    } else if (variant?.startsWith('time_v')) {
+      generateTimeChallenge();
+    } else if (variant?.startsWith('dimension_v')) {
+      generateDimensionChallenge();
+    } else if (variant?.startsWith('perception_v')) {
+      generatePerceptionChallenge();
+    } else if (variant?.startsWith('transcendent_v')) {
+      generateTranscendentChallenge();
     } else {
       // 默认：颜色挑战
       generateColorChallenge();
@@ -321,6 +337,363 @@ export function VariantChallenge({ challenge, onComplete, onMistake }: VariantCh
     setItems(newItems);
   };
 
+  const generatePhysicsChallenge = () => {
+    // 物理引擎：轨迹预测与碰撞
+    const mechanicType = challenge.config.mechanicType || 'trajectory';
+    const projectiles = challenge.config.projectiles || 3;
+    const gravity = challenge.config.gravity || 0.5;
+
+    setTarget({
+      type: 'physics',
+      mechanicType,
+      hits: 0,
+      required: projectiles,
+      gravity
+    });
+
+    const newItems = Array.from({ length: projectiles }, (_, i) => ({
+      id: i,
+      x: Math.random() * 60 + 20,
+      y: 20 + i * 15,
+      vx: (Math.random() - 0.5) * 2,
+      vy: Math.random() * 2,
+      radius: 25,
+      active: true
+    }));
+
+    setItems(newItems);
+
+    // 物理模拟
+    const interval = setInterval(() => {
+      setItems(prev => prev.map(item => {
+        if (!item.active) return item;
+
+        let newVy = item.vy + gravity * 0.1;
+        let newX = item.x + item.vx;
+        let newY = item.y + newVy;
+        let newVx = item.vx;
+
+        // 边界碰撞
+        if (newX < 10 || newX > 90) {
+          newVx = -newVx * (challenge.config.friction || 0.95);
+          newX = Math.max(10, Math.min(90, newX));
+        }
+        if (newY > 85) {
+          newY = 85;
+          newVy = -newVy * 0.7;
+        }
+
+        return { ...item, x: newX, y: newY, vx: newVx, vy: newVy };
+      }));
+    }, 50);
+
+    return () => clearInterval(interval);
+  };
+
+  const generateLogicChallenge = () => {
+    // 逻辑推理：模式识别与推理
+    const logicType = challenge.config.logicType || 'pattern';
+    const gridSize = challenge.config.gridSize || 3;
+
+    if (logicType === 'pattern') {
+      // 模式识别
+      const patterns = ['🔴', '🔵', '🟢', '🟡'];
+      const sequence = [0, 1, 0, 2, 0, 3]; // 间隔模式
+      const missing = 4; // 缺失位置
+
+      setTarget({ type: 'logic', logicType, answer: sequence[missing], missing });
+      setItems(patterns.map((p, i) => ({ id: i, pattern: p, value: i })));
+    } else {
+      // 数独简化版
+      const grid = Array.from({ length: gridSize * gridSize }, (_, i) => ({
+        id: i,
+        value: null,
+        fixed: Math.random() > 0.6,
+        x: (i % gridSize) * 25 + 15,
+        y: Math.floor(i / gridSize) * 25 + 15
+      }));
+
+      setTarget({ type: 'logic', logicType: 'sudoku', gridSize, completed: 0 });
+      setItems(grid);
+    }
+  };
+
+  const generateCoordinationChallenge = () => {
+    // 协调控制：多任务协同
+    const controllers = challenge.config.controllers || 2;
+    const simultaneousActions = challenge.config.simultaneousActions || 3;
+
+    setTarget({
+      type: 'coordination',
+      controllers,
+      activeController: 0,
+      completedActions: 0,
+      required: simultaneousActions
+    });
+
+    const colors = ['#EF4444', '#3B82F6', '#10B981', '#F59E0B'];
+    const newItems = Array.from({ length: controllers }, (_, i) => ({
+      id: i,
+      controller: i,
+      color: colors[i],
+      x: 20 + i * 30,
+      y: 50,
+      targetX: 50,
+      targetY: 50,
+      active: i === 0
+    }));
+
+    setItems(newItems);
+
+    // 定时切换控制器
+    const interval = setInterval(() => {
+      setTarget((prev: any) => ({
+        ...prev,
+        activeController: (prev.activeController + 1) % controllers
+      }));
+    }, 3000);
+
+    return () => clearInterval(interval);
+  };
+
+  const generateUltimateChallenge = () => {
+    // 终极融合：全机制融合
+    const fusionLevel = challenge.config.fusionLevel || 1;
+    const phases = challenge.config.multiPhase ? 3 : 1;
+
+    setTarget({
+      type: 'ultimate',
+      phase: 1,
+      totalPhases: phases,
+      fusionLevel,
+      requirements: {
+        phase1: { color: true, shape: true, math: true },
+        phase2: { memory: true, speed: true },
+        phase3: { all: true }
+      },
+      progress: 0
+    });
+
+    const colors = ['#EF4444', '#3B82F6', '#10B981'];
+    const shapes = ['circle', 'square', 'triangle'];
+
+    const newItems = Array.from({ length: 12 }, (_, i) => ({
+      id: i,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      shape: shapes[Math.floor(Math.random() * shapes.length)],
+      number: Math.floor(Math.random() * 10) + 1,
+      x: Math.random() * 80 + 10,
+      y: Math.random() * 70 + 10,
+      vx: (Math.random() - 0.5) * 1.5,
+      vy: (Math.random() - 0.5) * 1.5
+    }));
+
+    setItems(newItems);
+
+    // 移动元素
+    const interval = setInterval(() => {
+      setItems(prev => prev.map(item => ({
+        ...item,
+        x: Math.max(5, Math.min(95, item.x + item.vx)),
+        y: Math.max(5, Math.min(95, item.y + item.vy)),
+        vx: item.x <= 5 || item.x >= 95 ? -item.vx : item.vx,
+        vy: item.y <= 5 || item.y >= 95 ? -item.vy : item.vy
+      })));
+    }, 50);
+
+    return () => clearInterval(interval);
+  };
+
+  const generateTimeChallenge = () => {
+    // 时间操控：时间流动掌控
+    const timeType = challenge.config.timeType || 'slowmo';
+    const timeScale = challenge.config.timeScale || 0.5;
+
+    setTarget({
+      type: 'time',
+      timeType,
+      timeScale,
+      rewinds: challenge.config.freezeCount || 3,
+      usedRewinds: 0,
+      hits: 0,
+      required: 5
+    });
+
+    const newItems = Array.from({ length: 8 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 80 + 10,
+      y: Math.random() * 70 + 10,
+      vx: (Math.random() - 0.5) * 3,
+      vy: (Math.random() - 0.5) * 3,
+      isTarget: i < 5,
+      color: i < 5 ? '#10B981' : '#EF4444'
+    }));
+
+    setItems(newItems);
+
+    // 时间流动（可调速）
+    const interval = setInterval(() => {
+      setItems(prev => prev.map(item => {
+        const speed = timeType === 'slowmo' ? timeScale : timeType === 'speedup' ? 2 : 1;
+        let newX = item.x + item.vx * speed;
+        let newY = item.y + item.vy * speed;
+
+        if (newX < 5 || newX > 95) item.vx = -item.vx;
+        if (newY < 5 || newY > 95) item.vy = -item.vy;
+
+        return {
+          ...item,
+          x: Math.max(5, Math.min(95, newX)),
+          y: Math.max(5, Math.min(95, newY))
+        };
+      }));
+    }, 50);
+
+    return () => clearInterval(interval);
+  };
+
+  const generateDimensionChallenge = () => {
+    // 维度穿梭：空间维度穿越
+    const dimensionType = challenge.config.dimensionType || 'portal';
+    const portals = challenge.config.portals || 2;
+
+    setTarget({
+      type: 'dimension',
+      dimensionType,
+      currentDimension: 0,
+      portalsUsed: 0,
+      targetDimension: 2,
+      collected: 0,
+      required: 5
+    });
+
+    const dimensions = [
+      { color: '#EF4444', name: '红色维度' },
+      { color: '#3B82F6', name: '蓝色维度' },
+      { color: '#10B981', name: '绿色维度' }
+    ];
+
+    const newItems = Array.from({ length: 8 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 80 + 10,
+      y: Math.random() * 70 + 10,
+      dimension: Math.floor(Math.random() * 3),
+      isPortal: i < portals,
+      targetDimension: (i % 3),
+      color: dimensions[i % 3].color
+    }));
+
+    setItems(newItems);
+  };
+
+  const generatePerceptionChallenge = () => {
+    // 感知挑战：突破感知极限
+    const perceptionType = challenge.config.perceptionType || 'illusion';
+    const illusionStrength = challenge.config.illusionStrength || 0.5;
+
+    setTarget({
+      type: 'perception',
+      perceptionType,
+      illusionStrength,
+      correct: 0,
+      required: 5
+    });
+
+    const colors = ['#EF4444', '#3B82F6', '#10B981'];
+    const newItems = Array.from({ length: 10 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 80 + 10,
+      y: Math.random() * 70 + 10,
+      realColor: colors[Math.floor(Math.random() * colors.length)],
+      illusionColor: colors[Math.floor(Math.random() * colors.length)],
+      size: 40 + Math.random() * 20 * (perceptionType === 'size_illusion' ? 2 : 1),
+      opacity: perceptionType === 'fade' ? 0.3 + Math.random() * 0.7 : 1,
+      isTarget: i < 5
+    }));
+
+    setItems(newItems);
+
+    // 闪烁效果
+    if (perceptionType === 'blink') {
+      const interval = setInterval(() => {
+        setItems(prev => prev.map(item => ({
+          ...item,
+          opacity: Math.random() > 0.5 ? 1 : 0.3
+        })));
+      }, 300);
+      return () => clearInterval(interval);
+    }
+  };
+
+  const generateTranscendentChallenge = () => {
+    // 超越试炼：史诗级Boss战
+    const bossLevel = challenge.config.bossLevel || 1;
+    const phases = challenge.config.phases || 3;
+    const patterns = challenge.config.bossPatterns || 5;
+
+    setTarget({
+      type: 'transcendent',
+      bossLevel,
+      currentPhase: 1,
+      totalPhases: phases,
+      bossHealth: 100,
+      playerHealth: 100,
+      currentPattern: 0,
+      patterns,
+      hits: 0
+    });
+
+    // Boss攻击模式
+    const bossPatterns = [
+      { type: 'spread', count: 8 },
+      { type: 'spiral', count: 12 },
+      { type: 'laser', count: 3 },
+      { type: 'random', count: 15 }
+    ];
+
+    const pattern = bossPatterns[Math.floor(Math.random() * bossPatterns.length)];
+    const newItems: any[] = Array.from({ length: pattern.count }, (_, i) => ({
+      id: i,
+      x: 50,
+      y: 20,
+      vx: Math.cos(i * Math.PI * 2 / pattern.count) * 2,
+      vy: Math.sin(i * Math.PI * 2 / pattern.count) * 2 + 1,
+      isBossAttack: true,
+      damage: 10
+    }));
+
+    // 添加可点击的弱点
+    newItems.push({
+      id: pattern.count,
+      x: 50,
+      y: 20,
+      vx: 0,
+      vy: 0,
+      isBossAttack: false,
+      isWeakPoint: true,
+      damage: 0
+    });
+
+    setItems(newItems);
+
+    // Boss攻击移动
+    const interval = setInterval(() => {
+      setItems(prev => prev.map(item => {
+        if (item.isBossAttack) {
+          const newX = item.x + item.vx;
+          const newY = item.y + item.vy;
+
+          if (newY > 100) return { ...item, active: false };
+
+          return { ...item, x: newX, y: newY };
+        }
+        return item;
+      }).filter(item => item.active !== false));
+    }, 50);
+
+    return () => clearInterval(interval);
+  };
+
   const handleItemClick = (item: any, index: number) => {
     if (clickedItems.has(index)) return;
 
@@ -408,6 +781,105 @@ export function VariantChallenge({ challenge, onComplete, onMistake }: VariantCh
           onMistake();
         }
         break;
+
+      case 'physics':
+        if (item.active) {
+          const newHits = target.hits + 1;
+          setTarget((prev: any) => ({ ...prev, hits: newHits }));
+          setItems(prev => prev.map(p => p.id === item.id ? { ...p, active: false } : p));
+          if (newHits >= target.required) {
+            setTimeout(() => onComplete(true), 300);
+          }
+        }
+        break;
+
+      case 'logic':
+        if (target.logicType === 'pattern') {
+          success = item.value === target.answer;
+          if (success) {
+            setTimeout(() => onComplete(true), 300);
+          } else {
+            onMistake();
+          }
+        }
+        break;
+
+      case 'coordination':
+        if (item.controller === target.activeController) {
+          const newCompleted = target.completedActions + 1;
+          setTarget((prev: any) => ({ ...prev, completedActions: newCompleted }));
+          if (newCompleted >= target.required) {
+            setTimeout(() => onComplete(true), 300);
+          }
+        } else {
+          onMistake();
+        }
+        break;
+
+      case 'ultimate':
+        // 简化版：点击正确颜色和形状
+        success = item.color === '#EF4444' && item.shape === 'circle';
+        if (success) {
+          const newProgress = target.progress + 1;
+          setTarget((prev: any) => ({ ...prev, progress: newProgress }));
+          if (newProgress >= 5) {
+            setTimeout(() => onComplete(true), 300);
+          }
+        } else {
+          onMistake();
+        }
+        break;
+
+      case 'time':
+        if (item.isTarget) {
+          const newHits = target.hits + 1;
+          setTarget((prev: any) => ({ ...prev, hits: newHits }));
+          setItems(prev => prev.filter(p => p.id !== item.id));
+          if (newHits >= target.required) {
+            setTimeout(() => onComplete(true), 300);
+          }
+        } else {
+          onMistake();
+        }
+        break;
+
+      case 'dimension':
+        if (item.isPortal) {
+          const newDimension = (target.currentDimension + 1) % 3;
+          setTarget((prev: any) => ({ ...prev, currentDimension: newDimension, portalsUsed: prev.portalsUsed + 1 }));
+        } else if (item.dimension === target.currentDimension) {
+          const newCollected = target.collected + 1;
+          setTarget((prev: any) => ({ ...prev, collected: newCollected }));
+          setItems(prev => prev.filter(p => p.id !== item.id));
+          if (newCollected >= target.required) {
+            setTimeout(() => onComplete(true), 300);
+          }
+        }
+        break;
+
+      case 'perception':
+        if (item.isTarget) {
+          const newCorrect = target.correct + 1;
+          setTarget((prev: any) => ({ ...prev, correct: newCorrect }));
+          setItems(prev => prev.filter(p => p.id !== item.id));
+          if (newCorrect >= target.required) {
+            setTimeout(() => onComplete(true), 300);
+          }
+        } else {
+          onMistake();
+        }
+        break;
+
+      case 'transcendent':
+        if (item.isWeakPoint) {
+          const newHits = target.hits + 1;
+          const newBossHealth = Math.max(0, target.bossHealth - 20);
+          setTarget((prev: any) => ({ ...prev, hits: newHits, bossHealth: newBossHealth }));
+          if (newBossHealth <= 0) {
+            setTimeout(() => onComplete(true), 300);
+          }
+        }
+        break;
     }
   };
 
@@ -429,6 +901,22 @@ export function VariantChallenge({ challenge, onComplete, onMistake }: VariantCh
         return <span>点击 <span style={{ color: target.color }}>这个颜色</span> 的 {target.shape}</span>;
       case 'innovative':
         return `按顺序点击 1→10 (当前: ${target.currentIndex + 1})`;
+      case 'physics':
+        return `⚛️ 点击移动的物体 (${target.hits}/${target.required})`;
+      case 'logic':
+        return target.logicType === 'pattern' ? '🧩 找出缺失的图案' : '🎯 完成数独谜题';
+      case 'coordination':
+        return `🎮 控制器 ${target.activeController + 1} - 点击它！(${target.completedActions}/${target.required})`;
+      case 'ultimate':
+        return `🔥 终极挑战：点击红色圆形 (${target.progress}/5)`;
+      case 'time':
+        return `⏰ ${target.timeType === 'slowmo' ? '慢动作' : '加速'}模式 - 点击绿色目标 (${target.hits}/${target.required})`;
+      case 'dimension':
+        return `🌀 维度 ${target.currentDimension + 1} - 收集物品 (${target.collected}/${target.required})`;
+      case 'perception':
+        return `👁️ 感知挑战 - 点击真实目标 (${target.correct}/${target.required})`;
+      case 'transcendent':
+        return `👹 Boss战 阶段${target.currentPhase}/${target.totalPhases} - Boss生命: ${target.bossHealth}%`;
       default:
         return challenge.description;
     }
@@ -441,9 +929,10 @@ export function VariantChallenge({ challenge, onComplete, onMistake }: VariantCh
       left: `${item.x}%`,
       top: `${item.y}%`,
       cursor: isClicked ? 'not-allowed' : 'pointer',
-      opacity: isClicked ? 0.3 : 1,
+      opacity: isClicked ? 0.3 : (item.opacity || 1),
     };
 
+    // Math challenge - buttons
     if (target?.type === 'math') {
       return (
         <motion.button
@@ -466,6 +955,7 @@ export function VariantChallenge({ challenge, onComplete, onMistake }: VariantCh
       );
     }
 
+    // Memory challenge
     if (target?.type === 'memory') {
       if (!item.visible && target.missingIndex === undefined) return null;
 
@@ -486,6 +976,164 @@ export function VariantChallenge({ challenge, onComplete, onMistake }: VariantCh
       );
     }
 
+    // Logic challenge - patterns
+    if (target?.type === 'logic' && item.pattern) {
+      return (
+        <motion.button
+          key={item.id}
+          onClick={() => handleItemClick(item, index)}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          style={{
+            padding: '16px 24px',
+            fontSize: '40px',
+            background: 'white',
+            border: '3px solid #6366F1',
+            borderRadius: '12px',
+            cursor: 'pointer'
+          }}
+        >
+          {item.pattern}
+        </motion.button>
+      );
+    }
+
+    // Coordination challenge - controllers
+    if (target?.type === 'coordination') {
+      return (
+        <motion.div
+          key={item.id}
+          onClick={() => handleItemClick(item, index)}
+          animate={{
+            scale: item.active ? [1, 1.1, 1] : 1,
+            boxShadow: item.active ? ['0 0 20px rgba(99, 102, 241, 0.5)', '0 0 40px rgba(99, 102, 241, 0.8)', '0 0 20px rgba(99, 102, 241, 0.5)'] : 'none'
+          }}
+          transition={{ duration: 1, repeat: Infinity }}
+          style={{
+            ...baseStyle,
+            width: '70px',
+            height: '70px',
+            background: item.color,
+            borderRadius: '50%',
+            border: item.active ? '4px solid white' : '2px solid rgba(255,255,255,0.3)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '24px',
+            fontWeight: 'bold',
+            color: '#fff',
+          }}
+        >
+          {item.controller + 1}
+        </motion.div>
+      );
+    }
+
+    // Dimension challenge - portals and items
+    if (target?.type === 'dimension') {
+      const isVisible = item.dimension === target.currentDimension || item.isPortal;
+      return (
+        <motion.div
+          key={item.id}
+          onClick={() => handleItemClick(item, index)}
+          animate={item.isPortal ? {
+            rotate: 360,
+            scale: [1, 1.2, 1]
+          } : {}}
+          transition={item.isPortal ? { duration: 2, repeat: Infinity } : {}}
+          style={{
+            ...baseStyle,
+            width: item.isPortal ? '80px' : '50px',
+            height: item.isPortal ? '80px' : '50px',
+            background: item.isPortal
+              ? 'radial-gradient(circle, #8B5CF6, #6366F1)'
+              : item.color,
+            borderRadius: '50%',
+            border: item.isPortal ? '3px solid white' : '2px solid rgba(255,255,255,0.5)',
+            opacity: isVisible ? 1 : 0.2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '20px',
+          }}
+        >
+          {item.isPortal ? '🌀' : '💎'}
+        </motion.div>
+      );
+    }
+
+    // Transcendent challenge - boss attacks and weak point
+    if (target?.type === 'transcendent') {
+      if (item.isBossAttack) {
+        return (
+          <motion.div
+            key={item.id}
+            style={{
+              ...baseStyle,
+              width: '30px',
+              height: '30px',
+              background: 'radial-gradient(circle, #EF4444, #DC2626)',
+              borderRadius: '50%',
+              border: '2px solid #FCA5A5',
+              pointerEvents: 'none',
+            }}
+          />
+        );
+      }
+
+      if (item.isWeakPoint) {
+        return (
+          <motion.div
+            key={item.id}
+            onClick={() => handleItemClick(item, index)}
+            animate={{
+              scale: [1, 1.3, 1],
+              boxShadow: ['0 0 20px #FBBF24', '0 0 40px #F59E0B', '0 0 20px #FBBF24']
+            }}
+            transition={{ duration: 0.8, repeat: Infinity }}
+            style={{
+              ...baseStyle,
+              width: '60px',
+              height: '60px',
+              background: 'radial-gradient(circle, #FBBF24, #F59E0B)',
+              borderRadius: '50%',
+              border: '3px solid #FDE68A',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '28px',
+              cursor: 'pointer',
+            }}
+          >
+            ⭐
+          </motion.div>
+        );
+      }
+    }
+
+    // Perception challenge - illusions
+    if (target?.type === 'perception') {
+      const displayColor = target.perceptionType === 'illusion' ? item.illusionColor : item.realColor;
+      return (
+        <motion.div
+          key={item.id}
+          onClick={() => handleItemClick(item, index)}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          style={{
+            ...baseStyle,
+            width: `${item.size || 50}px`,
+            height: `${item.size || 50}px`,
+            background: displayColor,
+            borderRadius: '50%',
+            border: item.isTarget ? '3px solid white' : 'none',
+            opacity: item.opacity,
+          }}
+        />
+      );
+    }
+
+    // Default rendering (color, shape, physics, time, ultimate, etc.)
     return (
       <motion.div
         key={item.id}
@@ -494,8 +1142,8 @@ export function VariantChallenge({ challenge, onComplete, onMistake }: VariantCh
         whileTap={{ scale: isClicked ? 1 : 0.9 }}
         style={{
           ...baseStyle,
-          width: '60px',
-          height: '60px',
+          width: item.radius ? `${item.radius * 2}px` : '60px',
+          height: item.radius ? `${item.radius * 2}px` : '60px',
           background: item.color || '#6366F1',
           borderRadius: item.shape === 'circle' ? '50%' : item.shape === 'triangle' ? '0' : '8px',
           clipPath: item.shape === 'triangle' ? 'polygon(50% 0%, 0% 100%, 100% 100%)' :
@@ -507,9 +1155,13 @@ export function VariantChallenge({ challenge, onComplete, onMistake }: VariantCh
           fontSize: '24px',
           fontWeight: 'bold',
           color: '#fff',
+          border: (target?.type === 'physics' && item.active) ? '3px solid #FBBF24' :
+                  (target?.type === 'time' && item.isTarget) ? '3px solid white' : 'none',
+          opacity: item.active === false ? 0.3 : (item.opacity || 1),
         }}
       >
         {target?.type === 'innovative' && item.value}
+        {target?.type === 'physics' && item.active && '⚛️'}
       </motion.div>
     );
   };

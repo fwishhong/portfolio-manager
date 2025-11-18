@@ -4,7 +4,10 @@
 
 // ============ 基础类型 ============
 
-export type ChallengeCategory = 'reaction' | 'memory' | 'math' | 'judgment' | 'spatial' | '综合';
+export type ChallengeCategory =
+  | 'reaction' | 'memory' | 'math' | 'judgment' | 'spatial' | '综合'
+  | 'physics' | 'logic' | 'coordination' | 'ultimate'
+  | 'time' | 'dimension' | 'perception' | 'transcendent';
 
 export type Dimension = '2D' | '3D';
 
@@ -111,6 +114,14 @@ export interface PlayerStats {
   mathCount: number;
   judgmentCount: number;
   spatialCount: number;
+  physicsCount: number;
+  logicCount: number;
+  coordinationCount: number;
+  ultimateCount: number;
+  timeCount: number;
+  dimensionCount: number;
+  perceptionCount: number;
+  transcendentCount: number;
 
   // 成就
   achievements: Achievement[];

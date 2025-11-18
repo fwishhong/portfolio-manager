@@ -8,7 +8,7 @@ export type SoundType =
   | 'whoosh' | 'explosion' | 'star' | 'countdown' | 'warning' | 'achievement'
   | 'transition' | 'error' | 'bonus';
 
-export type MusicTheme = 'friendly' | 'focused' | 'intense' | 'extreme' | 'master';
+export type MusicTheme = 'friendly' | 'focused' | 'intense' | 'extreme' | 'master' | 'legendary' | 'transcendent';
 
 class AudioManager {
   private audioContext: AudioContext | null = null;
@@ -340,6 +340,18 @@ class AudioManager {
         waveType: 'triangle' as OscillatorType,
         duration: 2,
         tempo: 160,
+      },
+      legendary: {
+        chords: [440.00, 554.37, 659.25, 880.00], // A C# E A
+        waveType: 'sine' as OscillatorType,
+        duration: 3,
+        tempo: 145,
+      },
+      transcendent: {
+        chords: [466.16, 587.33, 698.46, 932.33], // Bb D F Bb
+        waveType: 'triangle' as OscillatorType,
+        duration: 2.5,
+        tempo: 155,
       },
     };
 

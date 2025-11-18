@@ -24,7 +24,7 @@ export interface GameTheme {
   colors: ThemeColors;
   challengeRange: [number, number];
   description: string;
-  mood: 'friendly' | 'focused' | 'intense' | 'extreme' | 'master';
+  mood: 'friendly' | 'focused' | 'intense' | 'extreme' | 'master' | 'legendary' | 'transcendent';
 }
 
 // 新手友好主题 (CH001-050) - 绿色系
@@ -142,6 +142,52 @@ export const masterTheme: GameTheme = {
   },
 };
 
+// 传奇主题 (CH201-300) - 紫金色系
+export const legendaryTheme: GameTheme = {
+  name: 'legendary',
+  displayName: '传奇试炼',
+  challengeRange: [201, 300],
+  description: '华丽的紫金色，展现传奇力量',
+  mood: 'legendary',
+  colors: {
+    primary: '#8B5CF6',      // 紫色
+    secondary: '#A78BFA',    // 亮紫
+    accent: '#C4B5FD',       // 淡紫
+    background: '#3730A3',   // 深靛蓝背景
+    backgroundGradient: 'linear-gradient(135deg, #3730A3 0%, #4C1D95 50%, #6B21A8 100%)',
+    text: '#F5F3FF',
+    textSecondary: '#DDD6FE',
+    success: '#10B981',
+    warning: '#FBBF24',
+    danger: '#EF4444',
+    border: 'rgba(139, 92, 246, 0.4)',
+    shadow: 'rgba(139, 92, 246, 0.3)',
+  },
+};
+
+// 超越主题 (CH301-400) - 彩虹渐变色系
+export const transcendentTheme: GameTheme = {
+  name: 'transcendent',
+  displayName: '超越极限',
+  challengeRange: [301, 400],
+  description: '绚丽的彩虹渐变，突破一切界限',
+  mood: 'transcendent',
+  colors: {
+    primary: '#EC4899',      // 粉红
+    secondary: '#F472B6',    // 亮粉
+    accent: '#F9A8D4',       // 淡粉
+    background: '#831843',   // 深玫红背景
+    backgroundGradient: 'linear-gradient(135deg, #831843 0%, #6B21A8 25%, #3730A3 50%, #1E40AF 75%, #065F46 100%)',
+    text: '#FDF2F8',
+    textSecondary: '#FBCFE8',
+    success: '#10B981',
+    warning: '#F59E0B',
+    danger: '#DC2626',
+    border: 'rgba(236, 72, 153, 0.5)',
+    shadow: 'rgba(236, 72, 153, 0.4)',
+  },
+};
+
 // 所有主题
 export const allThemes: GameTheme[] = [
   friendlyTheme,
@@ -149,6 +195,8 @@ export const allThemes: GameTheme[] = [
   intenseTheme,
   extremeTheme,
   masterTheme,
+  legendaryTheme,
+  transcendentTheme,
 ];
 
 /**

@@ -58,13 +58,30 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
     requirement: { type: 'challenges_completed', target: 100 },
   },
   {
-    id: 'legend',
-    name: '传奇',
-    description: '完成所有200个挑战',
-    icon: '🏆',
+    id: 'master',
+    name: '大师',
+    description: '完成200个挑战',
+    icon: '👨‍🎓',
     category: 'progress',
     requirement: { type: 'challenges_completed', target: 200 },
+  },
+  {
+    id: 'legend',
+    name: '传奇',
+    description: '完成300个挑战',
+    icon: '🏆',
+    category: 'progress',
+    requirement: { type: 'challenges_completed', target: 300 },
     reward: { type: 'title', value: '传奇大师' },
+  },
+  {
+    id: 'transcendent',
+    name: '超越极限',
+    description: '完成所有400个挑战',
+    icon: '👑',
+    category: 'progress',
+    requirement: { type: 'challenges_completed', target: 400 },
+    reward: { type: 'title', value: '超越者' },
   },
 
   // 技能成就
@@ -178,6 +195,71 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
     category: 'mastery',
     requirement: { type: 'category_count', target: 20, category: 'spatial' },
   },
+  {
+    id: 'physics_master',
+    name: '物理大师',
+    description: '完成20个物理类挑战',
+    icon: '⚛️',
+    category: 'mastery',
+    requirement: { type: 'category_count', target: 20, category: 'physics' },
+  },
+  {
+    id: 'logic_master',
+    name: '逻辑大师',
+    description: '完成20个逻辑类挑战',
+    icon: '🧩',
+    category: 'mastery',
+    requirement: { type: 'category_count', target: 20, category: 'logic' },
+  },
+  {
+    id: 'coordination_master',
+    name: '协调大师',
+    description: '完成20个协调类挑战',
+    icon: '🎮',
+    category: 'mastery',
+    requirement: { type: 'category_count', target: 20, category: 'coordination' },
+  },
+  {
+    id: 'ultimate_master',
+    name: '融合大师',
+    description: '完成20个终极类挑战',
+    icon: '🔥',
+    category: 'mastery',
+    requirement: { type: 'category_count', target: 20, category: 'ultimate' },
+  },
+  {
+    id: 'time_master',
+    name: '时间大师',
+    description: '完成20个时间类挑战',
+    icon: '⏰',
+    category: 'mastery',
+    requirement: { type: 'category_count', target: 20, category: 'time' },
+  },
+  {
+    id: 'dimension_master',
+    name: '维度大师',
+    description: '完成20个维度类挑战',
+    icon: '🌀',
+    category: 'mastery',
+    requirement: { type: 'category_count', target: 20, category: 'dimension' },
+  },
+  {
+    id: 'perception_master',
+    name: '感知大师',
+    description: '完成20个感知类挑战',
+    icon: '👁️',
+    category: 'mastery',
+    requirement: { type: 'category_count', target: 20, category: 'perception' },
+  },
+  {
+    id: 'transcendent_master',
+    name: '超越大师',
+    description: '完成所有超越类挑战',
+    icon: '👹',
+    category: 'mastery',
+    requirement: { type: 'category_count', target: 25, category: 'transcendent' },
+    reward: { type: 'badge', value: 'Boss杀手' },
+  },
 
   // 速度成就
   {
@@ -271,6 +353,14 @@ export class AchievementManager {
     mathCount: number;
     judgmentCount: number;
     spatialCount: number;
+    physicsCount?: number;
+    logicCount?: number;
+    coordinationCount?: number;
+    ultimateCount?: number;
+    timeCount?: number;
+    dimensionCount?: number;
+    perceptionCount?: number;
+    transcendentCount?: number;
   }): Achievement[] {
     const newlyUnlocked: Achievement[] = [];
 
@@ -300,6 +390,14 @@ export class AchievementManager {
           else if (def.requirement.category === 'math') progress = stats.mathCount;
           else if (def.requirement.category === 'judgment') progress = stats.judgmentCount;
           else if (def.requirement.category === 'spatial') progress = stats.spatialCount;
+          else if (def.requirement.category === 'physics') progress = stats.physicsCount || 0;
+          else if (def.requirement.category === 'logic') progress = stats.logicCount || 0;
+          else if (def.requirement.category === 'coordination') progress = stats.coordinationCount || 0;
+          else if (def.requirement.category === 'ultimate') progress = stats.ultimateCount || 0;
+          else if (def.requirement.category === 'time') progress = stats.timeCount || 0;
+          else if (def.requirement.category === 'dimension') progress = stats.dimensionCount || 0;
+          else if (def.requirement.category === 'perception') progress = stats.perceptionCount || 0;
+          else if (def.requirement.category === 'transcendent') progress = stats.transcendentCount || 0;
           break;
       }
 

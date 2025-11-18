@@ -722,16 +722,241 @@ function generateVariantChallenges(): Challenge[] {
     });
   }
 
+  // ========== 第三阶段: CH201-CH400 (突破极限的创新挑战) ==========
+
+  // 201-225: 物理引擎挑战
+  for (let i = 201; i <= 225; i++) {
+    const diffOffset = Math.floor((i - 201) / 5);
+    const mechanicTypes = ['trajectory', 'collision', 'gravity', 'bounce', 'magnetism'];
+    variants.push({
+      id: `CH${i.toString().padStart(3, '0')}`,
+      name: `物理挑战${i - 200}`,
+      description: '考验物理直觉与预测能力',
+      type: 'physics',
+      dimension: i % 3 === 0 ? '3D' : '2D',
+      difficulty: clampDifficulty(3 + diffOffset * 0.4),
+      baseTimeLimit: Math.max(5, 12 - diffOffset),
+      config: {
+        physics: true,
+        gravity: 0.5 + diffOffset * 0.15,
+        friction: 0.95 - diffOffset * 0.02,
+        obstacles: Math.floor(diffOffset * 1.5),
+        projectiles: 3 + diffOffset,
+        mechanicType: mechanicTypes[diffOffset % 5],
+        variant: `physics_v${i - 200}`
+      },
+      tags: ['物理', '预测', '轨迹'],
+    });
+  }
+
+  // 226-250: 逻辑推理挑战
+  for (let i = 226; i <= 250; i++) {
+    const diffOffset = Math.floor((i - 226) / 5);
+    const logicTypes = ['pattern', 'deduction', 'sudoku', 'sequence', 'constraint'];
+    variants.push({
+      id: `CH${i.toString().padStart(3, '0')}`,
+      name: `逻辑推理${i - 225}`,
+      description: '运用逻辑思维解决谜题',
+      type: 'logic',
+      dimension: '2D',
+      difficulty: clampDifficulty(3 + diffOffset * 0.4),
+      baseTimeLimit: Math.max(8, 20 - diffOffset),
+      config: {
+        logic: true,
+        gridSize: 3 + Math.floor(diffOffset * 0.5),
+        constraints: 2 + diffOffset,
+        clues: Math.max(3, 8 - diffOffset),
+        complexity: 5 + diffOffset * 2,
+        logicType: logicTypes[diffOffset % 5],
+        variant: `logic_v${i - 225}`
+      },
+      tags: ['逻辑', '推理', '谜题'],
+    });
+  }
+
+  // 251-275: 协调控制挑战
+  for (let i = 251; i <= 275; i++) {
+    const diffOffset = Math.floor((i - 251) / 5);
+    const coordTypes = ['dual', 'multi', 'sync', 'split', 'mirror'];
+    variants.push({
+      id: `CH${i.toString().padStart(3, '0')}`,
+      name: `协调控制${i - 250}`,
+      description: '同时控制多个目标的极限挑战',
+      type: 'coordination',
+      dimension: i % 4 === 0 ? '3D' : '2D',
+      difficulty: clampDifficulty(4 + diffOffset * 0.2),
+      baseTimeLimit: Math.max(6, 15 - diffOffset),
+      config: {
+        coordination: true,
+        controllers: 2 + Math.floor(diffOffset * 0.4),
+        targets: 4 + diffOffset,
+        simultaneousActions: 2 + Math.floor(diffOffset * 0.3),
+        syncRequired: diffOffset >= 3,
+        coordType: coordTypes[diffOffset % 5],
+        variant: `coord_v${i - 250}`
+      },
+      tags: ['协调', '多任务', '同步'],
+    });
+  }
+
+  // 276-300: 终极融合挑战
+  for (let i = 276; i <= 300; i++) {
+    const diffOffset = i - 276;
+    variants.push({
+      id: `CH${i.toString().padStart(3, '0')}`,
+      name: `终极融合${i - 275}`,
+      description: '所有机制的终极结合体',
+      type: 'ultimate',
+      dimension: i % 2 === 0 ? '3D' : '2D',
+      difficulty: 5,
+      baseTimeLimit: Math.max(4, 18 - Math.floor(diffOffset / 3)),
+      config: {
+        ultimate: true,
+        fusionLevel: Math.floor(diffOffset / 3) + 1,
+        allMechanics: true,
+        physics: true,
+        logic: true,
+        coordination: true,
+        targets: 10 + Math.floor(diffOffset / 2),
+        distractors: 20 + diffOffset,
+        obstacles: 5 + Math.floor(diffOffset / 4),
+        multiPhase: true,
+        phases: Math.min(5, 3 + Math.floor(diffOffset / 5)),
+        randomized: true,
+        variant: `ultimate_v${i - 275}`
+      },
+      tags: ['终极', '融合', '全能', '传奇'],
+    });
+  }
+
+  // 301-325: 时间操控挑战
+  for (let i = 301; i <= 325; i++) {
+    const diffOffset = Math.floor((i - 301) / 5);
+    const timeTypes = ['slowmo', 'speedup', 'rewind', 'freeze', 'predict'];
+    variants.push({
+      id: `CH${i.toString().padStart(3, '0')}`,
+      name: `时间操控${i - 300}`,
+      description: '掌控时间的流动',
+      type: 'time',
+      dimension: i % 3 === 0 ? '3D' : '2D',
+      difficulty: clampDifficulty(4 + diffOffset * 0.2),
+      baseTimeLimit: Math.max(6, 14 - diffOffset * 0.8),
+      config: {
+        timeMechanic: true,
+        timeType: timeTypes[diffOffset % 5],
+        timeScale: 0.5 + diffOffset * 0.2,
+        rewindDuration: 2 + diffOffset * 0.5,
+        freezeCount: Math.min(5, 1 + diffOffset),
+        targets: 5 + diffOffset,
+        variant: `time_v${i - 300}`
+      },
+      tags: ['时间', '操控', '预知'],
+    });
+  }
+
+  // 326-350: 维度穿梭挑战
+  for (let i = 326; i <= 350; i++) {
+    const diffOffset = Math.floor((i - 326) / 5);
+    const dimensionTypes = ['portal', 'mirror', 'fold', 'warp', 'phase'];
+    variants.push({
+      id: `CH${i.toString().padStart(3, '0')}`,
+      name: `维度穿梭${i - 325}`,
+      description: '穿越不同维度空间',
+      type: 'dimension',
+      dimension: i % 2 === 0 ? '3D' : '2D',
+      difficulty: clampDifficulty(4 + diffOffset * 0.25),
+      baseTimeLimit: Math.max(7, 16 - diffOffset),
+      config: {
+        dimensionMechanic: true,
+        dimensionType: dimensionTypes[diffOffset % 5],
+        portals: 2 + Math.floor(diffOffset * 0.6),
+        mirrorAxis: ['horizontal', 'vertical', 'both'][diffOffset % 3],
+        foldLayers: 2 + Math.floor(diffOffset * 0.4),
+        phaseShift: diffOffset >= 3,
+        targets: 6 + diffOffset,
+        variant: `dimension_v${i - 325}`
+      },
+      tags: ['维度', '传送', '镜像'],
+    });
+  }
+
+  // 351-375: 感知挑战
+  for (let i = 351; i <= 375; i++) {
+    const diffOffset = Math.floor((i - 351) / 5);
+    const perceptionTypes = ['illusion', 'blind', 'distraction', 'synesthesia', 'paradox'];
+    variants.push({
+      id: `CH${i.toString().padStart(3, '0')}`,
+      name: `感知挑战${i - 350}`,
+      description: '突破感知的极限',
+      type: 'perception',
+      dimension: '2D',
+      difficulty: clampDifficulty(4 + diffOffset * 0.3),
+      baseTimeLimit: Math.max(8, 18 - diffOffset),
+      config: {
+        perceptionMechanic: true,
+        perceptionType: perceptionTypes[diffOffset % 5],
+        illusionStrength: 0.3 + diffOffset * 0.15,
+        blindSpots: 1 + Math.floor(diffOffset * 0.5),
+        distractionLevel: diffOffset,
+        sensoryFusion: diffOffset >= 4,
+        targets: 7 + diffOffset,
+        variant: `perception_v${i - 350}`
+      },
+      tags: ['感知', '错觉', '认知'],
+    });
+  }
+
+  // 376-400: 超越挑战（史诗级Boss战）
+  for (let i = 376; i <= 400; i++) {
+    const diffOffset = i - 376;
+    const bossLevel = Math.floor(diffOffset / 5) + 1;
+    variants.push({
+      id: `CH${i.toString().padStart(3, '0')}`,
+      name: `超越试炼${i - 375}`,
+      description: '超越极限的终极试炼',
+      type: 'transcendent',
+      dimension: i % 2 === 0 ? '3D' : '2D',
+      difficulty: 5,
+      baseTimeLimit: Math.max(5, 25 - diffOffset),
+      config: {
+        transcendent: true,
+        bossLevel,
+        epicChallenge: true,
+        adaptiveDifficulty: true,
+        allMechanics: true,
+        timeMechanic: true,
+        dimensionMechanic: true,
+        perceptionMechanic: true,
+        targets: 12 + Math.floor(diffOffset / 2),
+        distractors: 25 + diffOffset,
+        obstacles: 8 + Math.floor(diffOffset / 3),
+        multiPhase: true,
+        phases: Math.min(7, 4 + Math.floor(diffOffset / 4)),
+        bossPatterns: ['wave', 'spiral', 'chaos', 'adaptive'][bossLevel % 4],
+        variant: `transcendent_v${i - 375}`
+      },
+      tags: ['超越', '史诗', 'Boss', '终极'],
+    });
+  }
+
   return variants;
 }
 
 // 生成扩展关卡
 const VARIANT_CHALLENGES = generateVariantChallenges();
 
-// 合并所有关卡 (1-200)
-// - CH01-CH25: 核心关卡（精心设计的专用组件）
-// - CH26-CH100: 变体关卡（基础变体和混合）
+// 合并所有关卡 (1-400)
+// - CH001-CH025: 核心关卡（精心设计的专用组件）
+// - CH026-CH100: 变体关卡（基础变体和混合）
 // - CH101-CH200: 高级关卡（极限挑战和大师级）
+// - CH201-CH225: 物理引擎（轨迹预测与碰撞）
+// - CH226-CH250: 逻辑推理（模式识别与推理）
+// - CH251-CH275: 协调控制（多任务协同）
+// - CH276-CH300: 终极融合（全机制融合）
+// - CH301-CH325: 时间操控（时间流动掌控）
+// - CH326-CH350: 维度穿梭（空间维度穿越）
+// - CH351-CH375: 感知挑战（突破感知极限）
+// - CH376-CH400: 超越试炼（史诗级Boss战）
 export const ALL_CHALLENGES = [...BASE_CHALLENGES, ...VARIANT_CHALLENGES];
 
 // ============ 工具函数 ============

@@ -40,6 +40,14 @@ const initialPlayerStats: PlayerStats = {
   mathCount: 0,
   judgmentCount: 0,
   spatialCount: 0,
+  physicsCount: 0,
+  logicCount: 0,
+  coordinationCount: 0,
+  ultimateCount: 0,
+  timeCount: 0,
+  dimensionCount: 0,
+  perceptionCount: 0,
+  transcendentCount: 0,
   achievements: [],
   unlockedChallenges: ['CH01', 'CH02', 'CH03', 'CH04', 'CH05', 'CH06', 'CH10', 'CH14'],
   settings: {
@@ -138,6 +146,30 @@ export const useGameStore = create<GameStore>((set, get) => ({
         case 'spatial':
           categoryUpdates.spatialCount = (playerStats.spatialCount || 0) + categoryIncrement;
           break;
+        case 'physics':
+          categoryUpdates.physicsCount = (playerStats.physicsCount || 0) + categoryIncrement;
+          break;
+        case 'logic':
+          categoryUpdates.logicCount = (playerStats.logicCount || 0) + categoryIncrement;
+          break;
+        case 'coordination':
+          categoryUpdates.coordinationCount = (playerStats.coordinationCount || 0) + categoryIncrement;
+          break;
+        case 'ultimate':
+          categoryUpdates.ultimateCount = (playerStats.ultimateCount || 0) + categoryIncrement;
+          break;
+        case 'time':
+          categoryUpdates.timeCount = (playerStats.timeCount || 0) + categoryIncrement;
+          break;
+        case 'dimension':
+          categoryUpdates.dimensionCount = (playerStats.dimensionCount || 0) + categoryIncrement;
+          break;
+        case 'perception':
+          categoryUpdates.perceptionCount = (playerStats.perceptionCount || 0) + categoryIncrement;
+          break;
+        case 'transcendent':
+          categoryUpdates.transcendentCount = (playerStats.transcendentCount || 0) + categoryIncrement;
+          break;
       }
     }
 
@@ -167,6 +199,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
       mathCount: updatedStats.mathCount || 0,
       judgmentCount: updatedStats.judgmentCount || 0,
       spatialCount: updatedStats.spatialCount || 0,
+      physicsCount: updatedStats.physicsCount || 0,
+      logicCount: updatedStats.logicCount || 0,
+      coordinationCount: updatedStats.coordinationCount || 0,
+      ultimateCount: updatedStats.ultimateCount || 0,
+      timeCount: updatedStats.timeCount || 0,
+      dimensionCount: updatedStats.dimensionCount || 0,
+      perceptionCount: updatedStats.perceptionCount || 0,
+      transcendentCount: updatedStats.transcendentCount || 0,
     });
 
     const newUnlocked = [...speedAchievements, ...regularAchievements];
