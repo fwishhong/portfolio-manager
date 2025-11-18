@@ -132,6 +132,8 @@ export function GameEngine({ onGameOver }: GameEngineProps) {
   const handleChallengeComplete = (success: boolean) => {
     if (!currentChallenge) return;
 
+    console.log('🎯 Challenge complete called, success:', success);
+
     const timeUsed = (Date.now() - startTime) / 1000;
     const result = createChallengeResult(
       currentChallenge,
@@ -139,6 +141,8 @@ export function GameEngine({ onGameOver }: GameEngineProps) {
       mistakes,
       combo
     );
+
+    console.log('📊 Challenge result:', result);
 
     if (success && result.success) {
       difficultyManager.recordSuccess(timeUsed, currentChallenge.baseTimeLimit);
@@ -152,11 +156,15 @@ export function GameEngine({ onGameOver }: GameEngineProps) {
 
       completeChallenge(result);
 
+      console.log('⏭️ Loading next challenge in 1 second...');
+
       // 延迟加载下一关
       setTimeout(() => {
+        console.log('🔄 Now loading next challenge');
         loadNextChallenge();
       }, 1000);
     } else {
+      console.log('❌ Challenge failed');
       difficultyManager.recordFailure();
       audioManager.play('fail');
     }

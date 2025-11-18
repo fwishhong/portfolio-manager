@@ -404,17 +404,26 @@ export function VariantChallenge({ challenge, onComplete, onMistake }: VariantCh
       setTarget({ type: 'logic', logicType, answer: sequence[missing], missing });
       setItems(patterns.map((p, i) => ({ id: i, pattern: p, value: i })));
     } else {
-      // 数独简化版
-      const grid = Array.from({ length: gridSize * gridSize }, (_, i) => ({
+      // 数独简化版 - 简化为点击数字序列
+      const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+      const targetNumber = Math.floor(Math.random() * 9) + 1;
+
+      setTarget({
+        type: 'logic',
+        logicType: 'number_sequence',
+        targetNumber,
+        completed: 0,
+        required: 1
+      });
+
+      const newItems = numbers.sort(() => Math.random() - 0.5).map((num, i) => ({
         id: i,
-        value: null,
-        fixed: Math.random() > 0.6,
-        x: (i % gridSize) * 25 + 15,
-        y: Math.floor(i / gridSize) * 25 + 15
+        value: num,
+        x: (i % 3) * 30 + 15,
+        y: Math.floor(i / 3) * 30 + 15
       }));
 
-      setTarget({ type: 'logic', logicType: 'sudoku', gridSize, completed: 0 });
-      setItems(grid);
+      setItems(newItems);
     }
   };
 
@@ -801,6 +810,13 @@ export function VariantChallenge({ challenge, onComplete, onMistake }: VariantCh
           } else {
             onMistake();
           }
+        } else if (target.logicType === 'number_sequence') {
+          success = item.value === target.targetNumber;
+          if (success) {
+            setTimeout(() => onComplete(true), 300);
+          } else {
+            onMistake();
+          }
         }
         break;
 
@@ -904,7 +920,9 @@ export function VariantChallenge({ challenge, onComplete, onMistake }: VariantCh
       case 'physics':
         return `⚛️ 点击移动的物体 (${target.hits}/${target.required})`;
       case 'logic':
-        return target.logicType === 'pattern' ? '🧩 找出缺失的图案' : '🎯 完成数独谜题';
+        if (target.logicType === 'pattern') return '🧩 找出缺失的图案';
+        if (target.logicType === 'number_sequence') return `🎯 点击数字: ${target.targetNumber}`;
+        return '🎯 逻辑挑战';
       case 'coordination':
         return `🎮 控制器 ${target.activeController + 1} - 点击它！(${target.completedActions}/${target.required})`;
       case 'ultimate':
@@ -976,8 +994,8 @@ export function VariantChallenge({ challenge, onComplete, onMistake }: VariantCh
       );
     }
 
-    // Logic challenge - patterns
-    if (target?.type === 'logic' && item.pattern) {
+    // Logic challenge - patterns or numbers
+    if (target?.type === 'logic') {
       return (
         <motion.button
           key={item.id}
@@ -985,15 +1003,20 @@ export function VariantChallenge({ challenge, onComplete, onMistake }: VariantCh
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           style={{
+            position: item.pattern ? 'static' : 'absolute',
+            left: item.pattern ? undefined : `${item.x}%`,
+            top: item.pattern ? undefined : `${item.y}%`,
             padding: '16px 24px',
             fontSize: '40px',
             background: 'white',
             border: '3px solid #6366F1',
             borderRadius: '12px',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            color: '#333',
+            fontWeight: 'bold'
           }}
         >
-          {item.pattern}
+          {item.pattern || item.value}
         </motion.button>
       );
     }
